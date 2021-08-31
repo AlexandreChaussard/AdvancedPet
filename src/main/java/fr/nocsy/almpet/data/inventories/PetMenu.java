@@ -1,0 +1,68 @@
+package fr.nocsy.almpet.data.inventories;
+
+import fr.nocsy.almpet.data.Items;
+import fr.nocsy.almpet.data.Pet;
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class PetMenu {
+
+    @Getter
+    private static String title = "§0☀ §4Compagnons §0☀";
+
+    @Getter
+    private Inventory inventory;
+
+    public PetMenu(Player p, int page, boolean addPager)
+    {
+        List<Pet> availablePets = Pet.getAvailablePets(p);
+
+        while(availablePets.size() - 53*page < 0 &&
+                page > 0)
+        {
+            page--;
+        }
+
+        int invSize = Math.max(Math.min(availablePets.size() - 53*page, 53), 0);
+        while(invSize%9 != 0 || invSize == 0)
+        {
+            invSize++;
+        }
+
+        inventory = Bukkit.createInventory(null, invSize, title);
+
+        for(int i = page*53; i < invSize + page*53; i++)
+        {
+            if(i >= availablePets.size())
+            {
+                continue;
+            }
+            Pet pet = availablePets.get(i);
+
+            if(i%53 == 0 && i > page*53)
+            {
+                inventory.setItem(invSize-1, Items.page(page));
+                break;
+            }
+            inventory.addItem(pet.getIcon());
+
+        }
+
+        if(addPager)
+        {
+            inventory.setItem(invSize-1, Items.page(page));
+        }
+
+    }
+
+    public void open(Player p)
+    {
+        p.openInventory(inventory);
+    }
+
+}
