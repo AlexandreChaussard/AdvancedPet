@@ -11,15 +11,19 @@ public class GlobalConfig extends AbstractConfig {
     public static GlobalConfig instance;
 
     @Getter
-    private String prefix = "§8[§6Compagnon§8] »";
+    private String prefix = "§8[§6Mascotte§8] »";
     @Getter
-    private String defaultName = "§9Compagnon de %player%";
+    private String defaultName = "§9Mascotte de %player%";
     @Getter
-    public boolean nameable;
+    private boolean nameable;
     @Getter
-    public boolean mountable;
+    private boolean mountable;
     @Getter
-    public int distanceTeleport = 30;
+    private boolean rightClickToOpen;
+    @Getter
+    private boolean leftClickToOpen;
+    @Getter
+    private int distanceTeleport = 30;
 
     @Getter
     public int howManyLoaded;
@@ -41,6 +45,10 @@ public class GlobalConfig extends AbstractConfig {
             getConfig().set("Prefix", prefix);
         if(getConfig().get("DefaultName") == null)
             getConfig().set("DefaultName", defaultName);
+        if(getConfig().get("RightClickToOpenMenu") == null)
+            getConfig().set("RightClickToOpenMenu", true);
+        if(getConfig().get("LeftClickToOpenMenu") == null)
+            getConfig().set("LeftClickToOpenMenu", true);
         if(getConfig().get("Nameable") == null)
             getConfig().set("Nameable", true);
         if(getConfig().get("Mountable") == null)
@@ -68,6 +76,8 @@ public class GlobalConfig extends AbstractConfig {
 
         prefix              = getConfig().getString("Prefix");
         defaultName         = getConfig().getString("DefaultName");
+        rightClickToOpen    = getConfig().getBoolean("RightClickToOpenMenu");
+        leftClickToOpen     = getConfig().getBoolean("LeftClickToOpenMenu");
         nameable            = getConfig().getBoolean("Nameable");
         mountable           = getConfig().getBoolean("Mountable");
         distanceTeleport    = getConfig().getInt("DistanceTeleport");

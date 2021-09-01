@@ -15,7 +15,7 @@ import java.util.List;
 public class PetInteractionMenu {
 
     @Getter
-    private static String title = "§0☀ §4Compagnon §0☀";
+    private static String title = "§0☀ §4Mascotte §0☀";
 
     @Getter
     private Inventory inventory;

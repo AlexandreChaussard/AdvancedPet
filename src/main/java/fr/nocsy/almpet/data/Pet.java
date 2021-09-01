@@ -188,7 +188,7 @@ public class Pet {
                         MythicMobs.inst().getVolatileCodeHandler().getAIHandler().navigateToLocation(pet.getActiveMob().getEntity(), pet.getActiveMob().getEntity().getLocation(), Double.POSITIVE_INFINITY);
                     }
                     else if(distance > pet.getDistance() &&
-                        distance < GlobalConfig.getInstance().distanceTeleport)
+                        distance < GlobalConfig.getInstance().getDistanceTeleport())
                     {
                         AbstractLocation aloc = new AbstractLocation(pet.getActiveMob().getEntity().getWorld(),
                                                                     p.getLocation().getX(),
@@ -196,7 +196,7 @@ public class Pet {
                                                                     p.getLocation().getZ());
                         MythicMobs.inst().getVolatileCodeHandler().getAIHandler().navigateToLocation(pet.getActiveMob().getEntity(), aloc, Double.POSITIVE_INFINITY);
                     }
-                    else if(distance > GlobalConfig.getInstance().distanceTeleport)
+                    else if(distance > GlobalConfig.getInstance().getDistanceTeleport())
                     {
                         pet.teleportToPlayer(p);
                     }
@@ -353,6 +353,25 @@ public class Pet {
             localModeledEntity.setMountController("standard");
             localModeledEntity.addPassenger(ent);
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * Say if the specified entity is riding on the pet
+     * @param ent
+     */
+    public boolean hasMount(Entity ent)
+    {
+        if(isStillHere())
+        {
+            UUID petUUID = activeMob.getEntity().getUniqueId();
+            ModeledEntity localModeledEntity = ModelEngineAPI.api.getModelManager().getModeledEntity(petUUID);
+            if (localModeledEntity == null) {
+                return false;
+            }
+            localModeledEntity.setMountController("standard");
+            return localModeledEntity.hasPassenger(ent);
         }
         return false;
     }

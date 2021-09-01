@@ -13,7 +13,7 @@ import java.util.List;
 public class PetMenu {
 
     @Getter
-    private static String title = "§0☀ §4Compagnons §0☀";
+    private static String title = "§0☀ §4Mascottes §0☀";
 
     @Getter
     private Inventory inventory;

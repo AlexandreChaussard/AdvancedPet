@@ -38,7 +38,7 @@ public enum Items {
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add("§7Cliquez ici pour monter");
-        lore.add("§7sur votre compagnon");
+        lore.add("§7sur votre mascotte");
 
         meta.setLore(lore);
 
@@ -54,7 +54,7 @@ public enum Items {
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add("§7Cliquez ici pour renommer");
-        lore.add("§7votre compagnon");
+        lore.add("§7votre mascotte");
 
         meta.setLore(lore);
 
@@ -99,7 +99,7 @@ public enum Items {
         }
 
         lore.add("§cCliquez ici pour révoquer");
-        lore.add("§cvotre compagnon");
+        lore.add("§cvotre mascotte");
 
         meta.setLore(lore);
 

@@ -42,7 +42,7 @@ public class PetInteractionMenuListener implements Listener {
 
                 if(!pet.isStillHere())
                 {
-                    Language.sendMessage(p, "§cVotre compagnon a été révoqué avant que vous ne puissiez effectuer des modifications.");
+                    Language.sendMessage(p, "§cVotre mascotte a été révoqué avant que vous ne puissiez effectuer des modifications.");
                     p.closeInventory();
                     return;
                 }
@@ -51,7 +51,7 @@ public class PetInteractionMenuListener implements Listener {
                 {
                     if(!pet.setMount(p))
                     {
-                        Language.sendMessage(p, "§cImpossible de monter sur ce compagnon.");
+                        Language.sendMessage(p, "§cImpossible de monter sur ce mascotte.");
                     }
                 }
                 else if(it.isSimilar(Items.RENAME.getItem()))
@@ -59,13 +59,13 @@ public class PetInteractionMenuListener implements Listener {
                     if(!waitingForAnswer.contains(p.getUniqueId()))
                         waitingForAnswer.add(p.getUniqueId());
 
-                    Language.sendMessage(p, "§aÉcrivez dans le chat le nom que vous souhaitez donner à votre compagnon");
+                    Language.sendMessage(p, "§aÉcrivez dans le chat le nom que vous souhaitez donner à votre mascotte");
                     Language.sendMessage(p, "§aSi vous souhaitez le retirer, écrivez §cAucun§a dans le chat.");
                 }
                 else if(e.getSlot() == 2)
                 {
                     pet.despawn();
-                    Language.sendMessage(p, "§7Votre compagnon a été révoqué.");
+                    Language.sendMessage(p, "§7Votre mascotte a été révoqué.");
                 }
                 p.closeInventory();
             }
@@ -99,7 +99,7 @@ public class PetInteractionMenuListener implements Listener {
             }
             else
             {
-                Language.sendMessage(p, "§cVotre compagnon a été révoqué avant que vous ne puissiez effectuer les modifications.");
+                Language.sendMessage(p, "§cVotre mascotte a été révoqué avant que vous ne puissiez effectuer les modifications.");
             }
 
         }

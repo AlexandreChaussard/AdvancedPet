@@ -50,22 +50,22 @@ public class PetMenuListener implements Listener {
                     switch(executed)
                     {
                         case Pet.DESPAWNED_PREVIOUS:
-                            Language.sendMessage(p, "§7Votre compagnon précédent a été révoqué afin d'invoquer le nouveau.");
+                            Language.sendMessage(p, "§7Votre mascotte précédent a été révoqué afin d'invoquer le nouveau.");
                             break;
                         case Pet.MOB_SPAWN:
-                            Language.sendMessage(p, "§7Un compagnon vient d'être invoqué !");
+                            Language.sendMessage(p, "§7Un mascotte vient d'être invoqué !");
                             break;
                         case Pet.MYTHIC_MOB_NULL:
-                            Language.sendMessage(p, "§cImpossible d'invoquer ce compagnon. Le mythicMob associé est null.");
+                            Language.sendMessage(p, "§cImpossible d'invoquer ce mascotte. Le mythicMob associé est null.");
                             break;
                         case Pet.NO_MOB_MATCH:
-                            Language.sendMessage(p, "§cImpossible d'invoquer ce compagnon. Le mythicMob associé n'a pas été trouvé dans MythicMobs.");
+                            Language.sendMessage(p, "§cImpossible d'invoquer ce mascotte. Le mythicMob associé n'a pas été trouvé dans MythicMobs.");
                             break;
                         case Pet.NOT_ALLOWED:
-                            Language.sendMessage(p, "§cVous n'avez pas encore débloqué ce compagnon.");
+                            Language.sendMessage(p, "§cVous n'avez pas encore débloqué ce mascotte.");
                             break;
                         case Pet.OWNER_NULL:
-                            Language.sendMessage(p, "§cImpossible d'invoquer ce compagnon. Le propriétaire n'a pas été trouvé.");
+                            Language.sendMessage(p, "§cImpossible d'invoquer ce mascotte. Le propriétaire n'a pas été trouvé.");
                             break;
                     }
                 }
