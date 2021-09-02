@@ -144,7 +144,7 @@ public class Pet {
             }
             else
             {
-                setDisplayName(Language.TAG_TO_REMOVE_NAME.name());
+                setDisplayName(Language.TAG_TO_REMOVE_NAME.getMessage());
             }
 
 
