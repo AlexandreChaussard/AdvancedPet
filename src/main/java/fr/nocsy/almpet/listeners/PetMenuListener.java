@@ -50,22 +50,22 @@ public class PetMenuListener implements Listener {
                     switch(executed)
                     {
                         case Pet.DESPAWNED_PREVIOUS:
-                            Language.sendMessage(p, "§7Votre mascotte précédent a été révoqué afin d'invoquer le nouveau.");
+                            Language.REVOKED_FOR_NEW_ONE.sendMessage(p);
                             break;
                         case Pet.MOB_SPAWN:
-                            Language.sendMessage(p, "§7Un mascotte vient d'être invoqué !");
+                            Language.SUMMONED.sendMessage(p);
                             break;
                         case Pet.MYTHIC_MOB_NULL:
-                            Language.sendMessage(p, "§cImpossible d'invoquer ce mascotte. Le mythicMob associé est null.");
+                            Language.MYTHICMOB_NULL.sendMessage(p);
                             break;
                         case Pet.NO_MOB_MATCH:
-                            Language.sendMessage(p, "§cImpossible d'invoquer ce mascotte. Le mythicMob associé n'a pas été trouvé dans MythicMobs.");
+                            Language.NO_MOB_MATCH.sendMessage(p);
                             break;
                         case Pet.NOT_ALLOWED:
-                            Language.sendMessage(p, "§cVous n'avez pas encore débloqué ce mascotte.");
+                            Language.NOT_ALLOWED.sendMessage(p);
                             break;
                         case Pet.OWNER_NULL:
-                            Language.sendMessage(p, "§cImpossible d'invoquer ce mascotte. Le propriétaire n'a pas été trouvé.");
+                            Language.OWNER_NOT_FOUND.sendMessage(p);
                             break;
                     }
                 }

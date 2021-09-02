@@ -1,11 +1,13 @@
 package fr.nocsy.almpet.listeners;
 
+import com.destroystokyo.paper.event.player.PlayerAttackEntityCooldownResetEvent;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import fr.nocsy.almpet.AlmPet;
 import fr.nocsy.almpet.data.GlobalConfig;
 import fr.nocsy.almpet.data.Pet;
 import fr.nocsy.almpet.data.inventories.PetInteractionMenu;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -94,6 +96,21 @@ public class PetListener implements Listener {
             return;
         }
 
+    }
+
+    @EventHandler
+    public void damaged(EntityDamageEvent e)
+    {
+        if(e.getEntity() instanceof Player)
+        {
+            Pet pet = Pet.getFromEntity(e.getEntity());
+            if(pet != null && pet.isInvulnerable())
+            {
+                e.setDamage(0);
+                e.setCancelled(true);
+            }
+            return;
+        }
     }
 
 }

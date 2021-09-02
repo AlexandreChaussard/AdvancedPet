@@ -57,7 +57,7 @@ public class DespawnPetFlag extends AbstractFlag implements StoppableFlag{
                         if(hasToBeRemoved)
                         {
                             pet.despawn();
-                            Language.sendMessage(p, "§cVotre mascotte ne peut vous suivre dans cette zone.");
+                            Language.CANT_FOLLOW_HERE.sendMessage(p);
                         }
 
                     }

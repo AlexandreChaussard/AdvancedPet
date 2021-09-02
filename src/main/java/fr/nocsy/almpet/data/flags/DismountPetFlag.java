@@ -63,7 +63,7 @@ public class DismountPetFlag extends AbstractFlag implements StoppableFlag {
                         if(hasToBeEjected)
                         {
                             pet.dismount(p);
-                            Language.sendMessage(p, "§cVous ne pouvez pas monter votre mascotte dans cette zone.");
+                            Language.NOT_MOUNTABLE_HERE.sendMessage(p);
                         }
 
                     }

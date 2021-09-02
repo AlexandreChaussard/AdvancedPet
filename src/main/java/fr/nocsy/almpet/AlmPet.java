@@ -2,6 +2,7 @@ package fr.nocsy.almpet;
 
 import fr.nocsy.almpet.commands.CommandHandler;
 import fr.nocsy.almpet.data.GlobalConfig;
+import fr.nocsy.almpet.data.LanguageConfig;
 import fr.nocsy.almpet.data.Pet;
 import fr.nocsy.almpet.data.flags.FlagsManager;
 import fr.nocsy.almpet.listeners.EventListener;
@@ -58,6 +59,7 @@ public class AlmPet extends JavaPlugin {
 
     private void createConfigs(){
         GlobalConfig.getInstance().init();
+        LanguageConfig.getInstance().init();
     }
 
 }

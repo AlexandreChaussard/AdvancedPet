@@ -1,7 +1,9 @@
 package fr.nocsy.almpet.commands;
 
+import fr.nocsy.almpet.data.FormatArg;
 import fr.nocsy.almpet.data.GlobalConfig;
 import fr.nocsy.almpet.data.Language;
+import fr.nocsy.almpet.data.LanguageConfig;
 import fr.nocsy.almpet.data.inventories.PetMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -31,7 +33,7 @@ public class AlmPetCommand implements CCommand {
                     Player playerToOpen = Bukkit.getPlayer(playerName);
                     if(playerToOpen == null)
                     {
-                        Language.sendMessage(sender, "§cLe joueur §6" + playerName + "§c n'est pas connecté.");
+                        Language.PLAYER_NOT_CONNECTED.sendMessageFormated(sender, new FormatArg("%player%", playerName));
                         return;
                     }
 
@@ -45,7 +47,7 @@ public class AlmPetCommand implements CCommand {
                     Player playerToOpen = Bukkit.getPlayer(playerName);
                     if(playerToOpen == null)
                     {
-                        Language.sendMessage(sender, "§cLe joueur §6" + playerName + "§c n'est pas connecté.");
+                        Language.PLAYER_NOT_CONNECTED.sendMessageFormated(sender, new FormatArg("%player%", playerName));
                         return;
                     }
 
@@ -59,13 +61,14 @@ public class AlmPetCommand implements CCommand {
                 if(args[0].equalsIgnoreCase("reload"))
                 {
                     GlobalConfig.getInstance().reload();
-                    Language.sendMessage(sender, "§aReload effectué avec succès.");
-                    Language.sendMessage(sender, "§a" + GlobalConfig.getInstance().getHowManyLoaded() + " pets ont été enregistrés avec succès.");
+                    LanguageConfig.getInstance().reload();
+                    Language.RELOAD_SUCCESS.sendMessage(sender);
+                    Language.HOW_MANY_PETS_LOADED.sendMessageFormated(sender, new FormatArg("%numberofpets%", Integer.toString(GlobalConfig.getInstance().getHowManyLoaded())));
                     return;
                 }
             }
 
-            Language.sendMessage(sender, "§7Utilisation : §6/almpet <reload/open/opento> <player>");
+            Language.USAGE.sendMessage(sender);
         }
     }
 }

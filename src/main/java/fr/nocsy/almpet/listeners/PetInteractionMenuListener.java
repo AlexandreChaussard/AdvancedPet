@@ -42,7 +42,7 @@ public class PetInteractionMenuListener implements Listener {
 
                 if(!pet.isStillHere())
                 {
-                    Language.sendMessage(p, "§cVotre mascotte a été révoqué avant que vous ne puissiez effectuer des modifications.");
+                    Language.REVOKED_BEFORE_CHANGES.sendMessage(p);
                     p.closeInventory();
                     return;
                 }
@@ -51,7 +51,7 @@ public class PetInteractionMenuListener implements Listener {
                 {
                     if(!pet.setMount(p))
                     {
-                        Language.sendMessage(p, "§cImpossible de monter sur ce mascotte.");
+                        Language.NOT_MOUNTABLE.sendMessage(p);
                     }
                 }
                 else if(it.isSimilar(Items.RENAME.getItem()))
@@ -59,13 +59,13 @@ public class PetInteractionMenuListener implements Listener {
                     if(!waitingForAnswer.contains(p.getUniqueId()))
                         waitingForAnswer.add(p.getUniqueId());
 
-                    Language.sendMessage(p, "§aÉcrivez dans le chat le nom que vous souhaitez donner à votre mascotte");
-                    Language.sendMessage(p, "§aSi vous souhaitez le retirer, écrivez §cAucun§a dans le chat.");
+                    Language.TYPE_NAME_IN_CHAT.sendMessage(p);
+                    Language.IF_WISH_TO_REMOVE_NAME.sendMessage(p);
                 }
                 else if(e.getSlot() == 2)
                 {
                     pet.despawn();
-                    Language.sendMessage(p, "§7Votre mascotte a été révoqué.");
+                    Language.REVOKED.sendMessage(p);
                 }
                 p.closeInventory();
             }
@@ -95,11 +95,11 @@ public class PetInteractionMenuListener implements Listener {
             if(pet != null && pet.isStillHere())
             {
                 pet.setDisplayName(name);
-                Language.sendMessage(p, "§aSurnom changé avec succès !");
+                Language.NICKNAME_CHANGED_SUCCESSFULY.sendMessage(p);
             }
             else
             {
-                Language.sendMessage(p, "§cVotre mascotte a été révoqué avant que vous ne puissiez effectuer les modifications.");
+                Language.REVOKED_BEFORE_CHANGES.sendMessage(p);
             }
 
         }

@@ -2,12 +2,14 @@ package fr.nocsy.almpet.data;
 
 import fr.nocsy.almpet.data.inventories.PlayerData;
 import lombok.Getter;
+import org.apache.commons.codec.language.bm.Lang;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public enum Items {
 
@@ -34,12 +36,9 @@ public enum Items {
     {
         ItemStack it = new ItemStack(Material.SADDLE);
         ItemMeta meta = it.getItemMeta();
-        meta.setDisplayName("§6Chevaucher");
+        meta.setDisplayName(Language.MOUNT_ITEM_NAME.getMessage());
 
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add("§7Cliquez ici pour monter");
-        lore.add("§7sur votre mascotte");
-
+        ArrayList<String> lore = new ArrayList<>(Arrays.asList(Language.MOUNT_ITEM_DESCRIPTION.getMessage().split("\n")));
         meta.setLore(lore);
 
         it.setItemMeta(meta);
@@ -50,12 +49,9 @@ public enum Items {
     {
         ItemStack it = new ItemStack(Material.NAME_TAG);
         ItemMeta meta = it.getItemMeta();
-        meta.setDisplayName("§6Renommer");
+        meta.setDisplayName(Language.RENAME_ITEM_NAME.getMessage());
 
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add("§7Cliquez ici pour renommer");
-        lore.add("§7votre mascotte");
-
+        ArrayList<String> lore = new ArrayList<>(Arrays.asList(Language.RENAME_ITEM_DESCRIPTION.getMessage().split("\n")));
         meta.setLore(lore);
 
         it.setItemMeta(meta);
@@ -66,14 +62,11 @@ public enum Items {
     {
         ItemStack it = new ItemStack(Material.PAPER);
         ItemMeta meta = it.getItemMeta();
-        meta.setDisplayName("§6Tourner la page");
+        meta.setDisplayName(Language.TURNPAGE_ITEM_NAME.getMessage());
 
         meta.setLocalizedName("AlmPetPage;" + index);
 
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add("§7Cliquez §edroit§7 pour §eavancer");
-        lore.add("§7Cliquez §agauche§7 pour §areculer");
-
+        ArrayList<String> lore = new ArrayList<>(Arrays.asList(Language.TURNPAGE_ITEM_DESCRIPTION.getMessage().split("\n")));
         meta.setLore(lore);
 
         it.setItemMeta(meta);
@@ -94,12 +87,11 @@ public enum Items {
         if(pd.getMapOfRegisteredNames().containsKey(pet.getId()))
         {
             lore.add(" ");
-            lore.add("§9Surnom : §7" + pd.getMapOfRegisteredNames().get(pet.getId()));
+            lore.add(Language.NICKNAME.getMessageFormatted(new FormatArg("%nickname%", pd.getMapOfRegisteredNames().get(pet.getId()))));
             lore.add(" ");
         }
 
-        lore.add("§cCliquez ici pour révoquer");
-        lore.add("§cvotre mascotte");
+        lore.addAll(Arrays.asList(Language.NICKNAME_ITEM_LORE.getMessage().split("\n")));
 
         meta.setLore(lore);
 

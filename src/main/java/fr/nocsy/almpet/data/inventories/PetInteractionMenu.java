@@ -2,6 +2,7 @@ package fr.nocsy.almpet.data.inventories;
 
 import fr.nocsy.almpet.data.GlobalConfig;
 import fr.nocsy.almpet.data.Items;
+import fr.nocsy.almpet.data.Language;
 import fr.nocsy.almpet.data.Pet;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -15,7 +16,7 @@ import java.util.List;
 public class PetInteractionMenu {
 
     @Getter
-    private static String title = "§0☀ §4Mascotte §0☀";
+    private static String title = Language.INVENTORY_PETS_MENU_INTERACTIONS.getMessage();
 
     @Getter
     private Inventory inventory;

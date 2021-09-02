@@ -79,6 +79,9 @@ public class Pet {
     @Getter
     private ActiveMob activeMob;
 
+    @Getter
+    private boolean invulnerable;
+
     /**
      * Constructor only used to create a fundamental Pet. If you wish to use a pet instance, please refer to copy()
      * @param id
@@ -112,7 +115,11 @@ public class Pet {
             Optional<ActiveMob> maybeHere = MythicMobs.inst().getMobManager().getActiveMob(ent.getUniqueId());
             maybeHere.ifPresent(mob -> activeMob = mob);
             ent.setMetadata("AlmPet", new FixedMetadataValue(AlmPet.getInstance(), this));
-
+            if(ent.isInvulnerable() && GlobalConfig.getInstance().isLeftClickToOpen())
+            {
+                this.invulnerable = true;
+                ent.setInvulnerable(false);
+            }
             activeMob.setOwner(owner);
             this.ia();
 
