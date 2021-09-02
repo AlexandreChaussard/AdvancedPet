@@ -2,6 +2,7 @@ package fr.nocsy.almpet.listeners;
 
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import fr.nocsy.almpet.data.FormatArg;
 import fr.nocsy.almpet.data.Items;
 import fr.nocsy.almpet.data.Language;
 import fr.nocsy.almpet.data.Pet;
@@ -60,7 +61,7 @@ public class PetInteractionMenuListener implements Listener {
                         waitingForAnswer.add(p.getUniqueId());
 
                     Language.TYPE_NAME_IN_CHAT.sendMessage(p);
-                    Language.IF_WISH_TO_REMOVE_NAME.sendMessage(p);
+                    Language.IF_WISH_TO_REMOVE_NAME.sendMessageFormated(p, new FormatArg("%tag%", Language.TAG_TO_REMOVE_NAME.getMessage()));
                 }
                 else if(e.getSlot() == 2)
                 {

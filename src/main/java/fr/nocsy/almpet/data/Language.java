@@ -34,8 +34,9 @@ public enum Language {
     NOT_MOUNTABLE_HERE("§cVous ne pouvez pas monter votre mascotte dans cette zone."),
     CANT_FOLLOW_HERE("§cVotre mascotte ne peut vous suivre dans cette zone."),
     TYPE_NAME_IN_CHAT("§aÉcrivez dans le chat le nom que vous souhaitez donner à votre mascotte"),
-    IF_WISH_TO_REMOVE_NAME("§aSi vous souhaitez le retirer, écrivez §cAucun§a dans le chat."),
+    IF_WISH_TO_REMOVE_NAME("§aSi vous souhaitez le retirer, écrivez §c%tag%§a dans le chat."),
     NICKNAME_CHANGED_SUCCESSFULY("§aSurnom changé avec succès !"),
+    TAG_TO_REMOVE_NAME("Aucun"),
 
     PLAYER_NOT_CONNECTED("§cLe joueur §6%player%§c n'est pas connecté."),
 

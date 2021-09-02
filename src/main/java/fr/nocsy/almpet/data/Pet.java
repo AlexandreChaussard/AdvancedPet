@@ -144,7 +144,7 @@ public class Pet {
             }
             else
             {
-                setDisplayName("Aucun");
+                setDisplayName(Language.TAG_TO_REMOVE_NAME.name());
             }
 
 
@@ -295,7 +295,7 @@ public class Pet {
     {
         if(this.isStillHere())
         {
-            if(name.equalsIgnoreCase("Aucun"))
+            if(name.equalsIgnoreCase(Language.TAG_TO_REMOVE_NAME.getMessage()))
             {
                 activeMob.setShowCustomNameplate(false);
                 activeMob.getEntity().getBukkitEntity().setCustomName(GlobalConfig.getInstance().getDefaultName().replace("%player%", Bukkit.getOfflinePlayer(owner).getName()));
