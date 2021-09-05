@@ -1,6 +1,7 @@
 package fr.nocsy.almpet.data;
 
 import fr.nocsy.almpet.data.inventories.PlayerData;
+import fr.nocsy.almpet.utils.Utils;
 import lombok.Getter;
 import org.apache.commons.codec.language.bm.Lang;
 import org.bukkit.Material;
@@ -14,7 +15,8 @@ import java.util.Arrays;
 public enum Items {
 
     MOUNT("mount"),
-    RENAME("rename");
+    RENAME("rename"),
+    PETMENU("petmenu");
 
     @Getter
     private ItemStack item;
@@ -28,6 +30,9 @@ public enum Items {
                 break;
             case "rename":
                 item = rename();
+                break;
+            case "petmenu":
+                item = backToPets();
                 break;
         }
     }
@@ -58,6 +63,19 @@ public enum Items {
         return it;
     }
 
+    private static ItemStack backToPets()
+    {
+        ArrayList<String> lore = new ArrayList<>(Arrays.asList(Language.BACK_TO_PETMENU_ITEM_DESCRIPTION.getMessage().split("\n")));
+
+        ItemStack it = Utils.createHead(Language.BACK_TO_PETMENU_ITEM_NAME.getMessage(), lore, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTI5M2E2MDcwNTAzMTcyMDcxZjM1ZjU4YzgyMjA0ZTgxOGNkMDY1MTg2OTAxY2ExOWY3ZGFkYmRhYzE2NWU0NCJ9fX0=");
+        ItemMeta meta = it.getItemMeta();
+        meta.setLocalizedName("AlmPet;BackToPetMenu");
+
+        it.setItemMeta(meta);
+
+        return it;
+    }
+
     public static ItemStack page(int index)
     {
         ItemStack it = new ItemStack(Material.PAPER);
@@ -82,12 +100,10 @@ public enum Items {
 
         ArrayList<String> lore = new ArrayList<>(meta.getLore());
 
-        PlayerData pd = new PlayerData(pet.getOwner());
-
-        if(pd.getMapOfRegisteredNames().containsKey(pet.getId()))
+        if(pet.getCurrentName() != null)
         {
             lore.add(" ");
-            lore.add(Language.NICKNAME.getMessageFormatted(new FormatArg("%nickname%", pd.getMapOfRegisteredNames().get(pet.getId()))));
+            lore.add(Language.NICKNAME.getMessageFormatted(new FormatArg("%nickname%", pet.getCurrentName())));
             lore.add(" ");
         }
 

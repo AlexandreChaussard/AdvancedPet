@@ -11,10 +11,12 @@ import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter;
 import io.lumine.xikage.mythicmobs.api.exceptions.InvalidMobTypeException;
 import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
 import io.lumine.xikage.mythicmobs.mobs.MythicMob;
+import io.lumine.xikage.mythicmobs.skills.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -47,6 +49,9 @@ public class Pet {
     //********** Global Pet **********
 
     @Getter
+    private Pet instance;
+
+    @Getter
     private String id;
 
     @Setter
@@ -69,6 +74,14 @@ public class Pet {
     @Getter
     private ItemStack icon;
 
+    @Getter
+    @Setter
+    private String currentName;
+
+    @Getter
+    @Setter
+    private Skill despawnSkill;
+
     //********** Living entity **********
 
     @Setter
@@ -89,6 +102,7 @@ public class Pet {
     protected Pet(String id)
     {
         this.id = id;
+        this.instance = this;
     }
 
 
@@ -101,7 +115,7 @@ public class Pet {
     {
         if(owner != null &&
                 Bukkit.getPlayer(owner) != null &&
-                !Objects.requireNonNull(Bukkit.getPlayer(owner)).hasPermission(permission))
+                !Bukkit.getPlayer(owner).hasPermission(permission))
             return NOT_ALLOWED;
 
         if(mythicMobName == null)
@@ -111,7 +125,11 @@ public class Pet {
 
         try {
 
-            Entity ent = MythicMobs.inst().getAPIHelper().spawnMythicMob(mythicMobName, loc);
+            Entity ent = MythicMobs.inst().getAPIHelper().spawnMythicMob(mythicMobName,  Utils.bruised(loc, getDistance()));
+            if(ent == null)
+            {
+                return MYTHIC_MOB_NULL;
+            }
             Optional<ActiveMob> maybeHere = MythicMobs.inst().getMobManager().getActiveMob(ent.getUniqueId());
             maybeHere.ifPresent(mob -> activeMob = mob);
             ent.setMetadata("AlmPet", new FixedMetadataValue(AlmPet.getInstance(), this));
@@ -136,15 +154,15 @@ public class Pet {
 
             activePets.put(owner, this);
 
-            PlayerData pd = new PlayerData(owner);
+            PlayerData pd = PlayerData.get(owner);
             String name = pd.getMapOfRegisteredNames().get(this.id);
             if(name != null)
             {
-                setDisplayName(name);
+                setDisplayName(name, false);
             }
             else
             {
-                setDisplayName(Language.TAG_TO_REMOVE_NAME.getMessage());
+                setDisplayName(Language.TAG_TO_REMOVE_NAME.getMessage(), false);
             }
 
 
@@ -163,13 +181,11 @@ public class Pet {
     public void ia()
     {
 
-        Pet pet = this;
-
         task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(AlmPet.getInstance(), new Runnable() {
 
             @Override
             public void run() {
-                if(!pet.isStillHere())
+                if(!getInstance().isStillHere())
                 {
                     Bukkit.getScheduler().cancelTask(task);
                     return;
@@ -179,38 +195,38 @@ public class Pet {
                 if(p != null)
                 {
                     Location ownerLoc = p.getLocation();
-                    Location petLoc = pet.getActiveMob().getEntity().getBukkitEntity().getLocation();
+                    Location petLoc = getInstance().getActiveMob().getEntity().getBukkitEntity().getLocation();
 
                     if(!ownerLoc.getWorld().getName().equals(petLoc.getWorld().getName()))
                     {
-                        pet.despawn();
-                        pet.spawn(p, p.getLocation());
+                        getInstance().despawn();
+                        getInstance().spawn(p, p.getLocation());
                         return;
                     }
 
                     double distance = Utils.distance(ownerLoc, petLoc);
 
-                    if(distance < pet.distance)
+                    if(distance < getInstance().distance)
                     {
-                        MythicMobs.inst().getVolatileCodeHandler().getAIHandler().navigateToLocation(pet.getActiveMob().getEntity(), pet.getActiveMob().getEntity().getLocation(), Double.POSITIVE_INFINITY);
+                        MythicMobs.inst().getVolatileCodeHandler().getAIHandler().navigateToLocation(getInstance().getActiveMob().getEntity(), getInstance().getActiveMob().getEntity().getLocation(), Double.POSITIVE_INFINITY);
                     }
-                    else if(distance > pet.getDistance() &&
+                    else if(distance > getInstance().getDistance() &&
                         distance < GlobalConfig.getInstance().getDistanceTeleport())
                     {
-                        AbstractLocation aloc = new AbstractLocation(pet.getActiveMob().getEntity().getWorld(),
+                        AbstractLocation aloc = new AbstractLocation(getInstance().getActiveMob().getEntity().getWorld(),
                                                                     p.getLocation().getX(),
                                                                     p.getLocation().getY(),
                                                                     p.getLocation().getZ());
-                        MythicMobs.inst().getVolatileCodeHandler().getAIHandler().navigateToLocation(pet.getActiveMob().getEntity(), aloc, Double.POSITIVE_INFINITY);
+                        MythicMobs.inst().getVolatileCodeHandler().getAIHandler().navigateToLocation(getInstance().getActiveMob().getEntity(), aloc, Double.POSITIVE_INFINITY);
                     }
                     else if(distance > GlobalConfig.getInstance().getDistanceTeleport())
                     {
-                        pet.teleportToPlayer(p);
+                        getInstance().teleportToPlayer(p);
                     }
                 }
                 else
                 {
-                    pet.despawn();
+                    getInstance().despawn();
                     Bukkit.getScheduler().cancelTask(task);
                 }
 
@@ -238,18 +254,25 @@ public class Pet {
     {
         if(activeMob != null)
         {
-            if(activeMob.getEntity() != null)
-                activeMob.getEntity().remove();
-            if(activeMob.getEntity() != null && activeMob.getEntity().getBukkitEntity() != null)
-                activeMob.getEntity().getBukkitEntity().remove();
 
-            activeMob.setDespawned();
+            if(despawnSkill != null)
+            {
+                despawnSkill.execute(new SkillMetadata(SkillTrigger.CUSTOM, activeMob, activeMob.getEntity()));
+            }
+            else
+            {
+                if(activeMob.getEntity() != null)
+                    activeMob.getEntity().remove();
+                if(activeMob.getEntity() != null && activeMob.getEntity().getBukkitEntity() != null)
+                    activeMob.getEntity().getBukkitEntity().remove();
+            }
 
             Player ownerPlayer = Bukkit.getPlayer(owner);
             if(ownerPlayer != null)
             {
                 this.dismount(ownerPlayer);
             }
+
             activePets.remove(owner);
             return true;
         }
@@ -263,7 +286,7 @@ public class Pet {
      */
     public void teleport(Location loc)
     {
-        if(activeMob != null && activeMob.getEntity() != null && activeMob.getEntity().getBukkitEntity() != null)
+        if(isStillHere())
         {
             this.despawn();
             this.spawn(loc);
@@ -275,8 +298,10 @@ public class Pet {
      */
     public void teleportToPlayer(Player p)
     {
-        if(activeMob != null && activeMob.getEntity() != null && activeMob.getEntity().getBukkitEntity() != null)
-            this.teleport(p.getLocation());
+        Location loc = Utils.bruised(p.getLocation(), getDistance());
+
+        if(isStillHere())
+            this.teleport(loc);
     }
 
     /**
@@ -291,39 +316,63 @@ public class Pet {
     /**
      * Set the display name of the pet
      */
-    public void setDisplayName(String name)
+    public void setDisplayName(final String name, final boolean save)
     {
-        if(this.isStillHere())
-        {
-            if(name.equalsIgnoreCase(Language.TAG_TO_REMOVE_NAME.getMessage()))
-            {
-                activeMob.setShowCustomNameplate(false);
-                activeMob.getEntity().getBukkitEntity().setCustomName(GlobalConfig.getInstance().getDefaultName().replace("%player%", Bukkit.getOfflinePlayer(owner).getName()));
-                activeMob.getEntity().getBukkitEntity().setCustomNameVisible(false);
-                setNameTagVisible(false);
+        try {
 
-                PlayerData pd = new PlayerData(owner);
-                pd.getMapOfRegisteredNames().remove(this.id);
-                pd.save();
-
+            if (name != null && name.length() > GlobalConfig.instance.getMaxNameLenght()) {
+                setDisplayName(name.substring(0, GlobalConfig.instance.getMaxNameLenght()), save);
                 return;
             }
-            activeMob.setShowCustomNameplate(true);
-            activeMob.getEntity().getBukkitEntity().setCustomName(name);
-            activeMob.getEntity().getBukkitEntity().setCustomNameVisible(true);
-            new BukkitRunnable()
-            {
 
-                @Override
-                public void run() {
-                    setNameTagVisible(true);
+            currentName = name;
+
+            if (isStillHere()) {
+
+                if (name == null || name.equalsIgnoreCase(Language.TAG_TO_REMOVE_NAME.getMessage())) {
+                    activeMob.getEntity().getBukkitEntity().setCustomName(GlobalConfig.getInstance().getDefaultName().replace("%player%", Bukkit.getOfflinePlayer(owner).getName()));
+
+                    new BukkitRunnable() {
+
+                        @Override
+                        public void run() {
+                            setNameTag(name, false);
+                        }
+                    }.runTaskLater(AlmPet.getInstance(), 20L);
+
+                    if(save)
+                    {
+                        PlayerData pd = PlayerData.get(owner);
+                        pd.getMapOfRegisteredNames().remove(getId());
+                        pd.save();
+                    }
+
+                    return;
                 }
-            }.runTaskLater(AlmPet.getInstance(), 20L);
 
-            PlayerData pd = new PlayerData(owner);
-            pd.getMapOfRegisteredNames().put(this.id, name);
-            pd.save();
+                activeMob.getEntity().getBukkitEntity().setCustomName(name);
 
+                new BukkitRunnable() {
+
+                    @Override
+                    public void run() {
+                        setNameTag(name, true);
+                    }
+                }.runTaskLater(AlmPet.getInstance(), 20L);
+
+                if(save)
+                {
+                    PlayerData pd = PlayerData.get(owner);
+                    pd.getMapOfRegisteredNames().put(getId(), name);
+                    pd.save();
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            AlmPet.getLog().warning("[AlmPet] : Une exception " + ex.getClass().getSimpleName() + " a été soulevé par setDisplayName(" + Language.TAG_TO_REMOVE_NAME.getMessage() + "), concernant le pet " + this.id);
+            ex.printStackTrace();
         }
     }
 
@@ -337,6 +386,7 @@ public class Pet {
         pet.setMythicMobName(mythicMobName);
         pet.setPermission(permission);
         pet.setDistance(distance);
+        pet.setDespawnSkill(despawnSkill);
         pet.setMountable(mountable);
         pet.setIcon(icon);
         pet.setOwner(owner);
@@ -400,7 +450,7 @@ public class Pet {
 
     }
 
-    public void setNameTagVisible(boolean visible)
+    public void setNameTag(String name, boolean visible)
     {
         if(isStillHere())
         {
@@ -410,6 +460,8 @@ public class Pet {
             }
             activeMob.getEntity().getBukkitEntity().setCustomNameVisible(visible);
             localModeledEntity.setNametagVisible(visible);
+            localModeledEntity.setNametag(name);
+            localModeledEntity.setInvisible(true);
         }
     }
 

@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class Utils {
@@ -52,6 +53,32 @@ public class Utils {
 
         return Math.sqrt(square);
 
+    }
+
+    /**
+     * Location bruiser
+     * @param loc
+     * @return
+     */
+    public static Location bruised(Location loc, double distance)
+    {
+        Random random = new Random();
+        double r = Math.min(1, distance) + (Math.max(distance-0.1, 1) - Math.min(1, distance)) * random.nextDouble();
+        double theta = 2*Math.PI * random.nextDouble();
+
+        double x = r*Math.cos(theta) + loc.getX();
+        double z = r*Math.sin(theta) + loc.getZ();
+        double y = loc.getY();
+
+        loc = new Location(loc.getWorld(), x, y, z);
+
+        int maxY = 0;
+        while(!loc.getBlock().isPassable() && maxY < loc.getWorld().getMaxHeight())
+        {
+            loc.add(0, 1, 0);
+            maxY++;
+        }
+        return loc;
     }
 
 }

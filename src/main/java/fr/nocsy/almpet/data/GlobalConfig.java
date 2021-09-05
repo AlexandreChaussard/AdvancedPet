@@ -1,10 +1,14 @@
 package fr.nocsy.almpet.data;
 
 import fr.nocsy.almpet.AlmPet;
+import io.lumine.xikage.mythicmobs.MythicMobs;
+import io.lumine.xikage.mythicmobs.skills.Skill;
 import lombok.Getter;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class GlobalConfig extends AbstractConfig {
 
@@ -24,6 +28,8 @@ public class GlobalConfig extends AbstractConfig {
     private boolean leftClickToOpen;
     @Getter
     private int distanceTeleport = 30;
+    @Getter
+    private int maxNameLenght = 16;
 
     @Getter
     public int howManyLoaded;
@@ -55,6 +61,8 @@ public class GlobalConfig extends AbstractConfig {
             getConfig().set("Mountable", true);
         if(getConfig().get("DistanceTeleport") == null)
             getConfig().set("DistanceTeleport", 30);
+        if(getConfig().get("MaxNameLenght") == null)
+            getConfig().set("MaxNameLenght", maxNameLenght);
         if(getConfig().get("Pets") == null)
             getConfig().set("Pets", new ArrayList<String>());
 
@@ -81,6 +89,7 @@ public class GlobalConfig extends AbstractConfig {
         nameable            = getConfig().getBoolean("Nameable");
         mountable           = getConfig().getBoolean("Mountable");
         distanceTeleport    = getConfig().getInt("DistanceTeleport");
+        maxNameLenght       = getConfig().getInt("MaxNameLenght");
 
         Pet.getObjectPets().clear();
 
@@ -93,6 +102,7 @@ public class GlobalConfig extends AbstractConfig {
                 String mobType              = getConfig().getString("Pets." + key + ".MythicMob");
                 String permission           = getConfig().getString("Pets." + key + ".Permission");
                 int distance                = getConfig().getInt("Pets." + key + ".Distance");
+                String despawnSkillName     = getConfig().getString("Pets." + key + ".DespawnSkill");
                 String iconName             = getConfig().getString("Pets." + key + ".Icon.Name");
                 String textureBase64        = getConfig().getString("Pets." + key + ".Icon.TextureBase64");
                 List<String> description    = getConfig().getStringList("Pets." + key + ".Icon.Description");
@@ -121,6 +131,25 @@ public class GlobalConfig extends AbstractConfig {
                     pet.setMountable(getConfig().getBoolean("Pets." + key + ".Mountable"));
                 }
                 pet.setDistance(distance);
+
+                if(despawnSkillName != null)
+                {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            Optional<Skill> optionalSkill = MythicMobs.inst().getSkillManager().getSkill(despawnSkillName);
+                            if(optionalSkill.isPresent())
+                            {
+                                pet.setDespawnSkill(optionalSkill.get());
+                            }
+                            if(pet.getDespawnSkill() == null)
+                            {
+                                AlmPet.getLog().warning("[AlmPet] : Impossible d'associer le despawn skill \"" + despawnSkillName + "\" au pet \"" + pet.getId() + "\", car le skill n'existe pas.");
+                            }
+                        }
+                    }.runTaskLater(AlmPet.getInstance(), 5L);
+                }
+
                 pet.buildIcon(iconName, description, textureBase64);
 
                 Pet.getObjectPets().add(pet);

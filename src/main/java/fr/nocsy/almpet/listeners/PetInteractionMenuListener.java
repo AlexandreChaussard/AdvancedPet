@@ -2,11 +2,13 @@ package fr.nocsy.almpet.listeners;
 
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import fr.nocsy.almpet.AlmPet;
 import fr.nocsy.almpet.data.FormatArg;
 import fr.nocsy.almpet.data.Items;
 import fr.nocsy.almpet.data.Language;
 import fr.nocsy.almpet.data.Pet;
 import fr.nocsy.almpet.data.inventories.PetInteractionMenu;
+import fr.nocsy.almpet.data.inventories.PetMenu;
 import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
 import lombok.Getter;
 import org.bukkit.ChatColor;
@@ -16,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -31,9 +34,21 @@ public class PetInteractionMenuListener implements Listener {
 
             Player p = (Player) e.getWhoClicked();
 
+            if(e.getClickedInventory() == null)
+            {
+                openBackPetMenu(p);
+                return;
+            }
+
             ItemStack it = e.getCurrentItem();
             if(it != null && it.hasItemMeta() && it.getItemMeta().hasDisplayName())
             {
+                if(it.getItemMeta().hasLocalizedName() && it.getItemMeta().getLocalizedName().equals(Items.PETMENU.getItem().getItemMeta().getLocalizedName()))
+                {
+                    openBackPetMenu(p);
+                    return;
+                }
+
                 Pet pet = Pet.getFromLastInteractedWith(p);
                 if(pet == null)
                 {
@@ -95,7 +110,8 @@ public class PetInteractionMenuListener implements Listener {
 
             if(pet != null && pet.isStillHere())
             {
-                pet.setDisplayName(name);
+                pet.setDisplayName(name, true);
+
                 Language.NICKNAME_CHANGED_SUCCESSFULY.sendMessage(p);
             }
             else
@@ -104,6 +120,14 @@ public class PetInteractionMenuListener implements Listener {
             }
 
         }
+    }
+
+    private void openBackPetMenu(Player p)
+    {
+        UUID uuid = p.getUniqueId();
+
+        PetMenu menu = new PetMenu(p, 0, false);
+        menu.open(p);
     }
 
 }

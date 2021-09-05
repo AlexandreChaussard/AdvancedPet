@@ -2,6 +2,7 @@ package fr.nocsy.almpet.data.inventories;
 
 import fr.nocsy.almpet.data.AbstractConfig;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,16 +11,32 @@ import java.util.UUID;
 public class PlayerData extends AbstractConfig {
 
     @Getter
+    public static HashMap<UUID, PlayerData> registeredData = new HashMap<>();
+    @Getter
     public HashMap<String, String> mapOfRegisteredNames = new HashMap<>();
 
     @Getter
     private final UUID uuid;
 
-    public PlayerData(UUID uuid)
+    private PlayerData(UUID uuid)
     {
         this.uuid = uuid;
         init();
         save();
+    }
+
+    public static PlayerData get(UUID owner)
+    {
+        if(registeredData.containsKey(owner))
+        {
+            return registeredData.get(owner);
+        }
+        else
+        {
+            PlayerData data = new PlayerData(owner);
+            registeredData.put(owner, data);
+            return data;
+        }
     }
 
     public void init()

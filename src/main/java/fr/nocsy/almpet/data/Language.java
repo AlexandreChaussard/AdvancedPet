@@ -16,6 +16,9 @@ public enum Language {
     RENAME_ITEM_NAME("§6Renommer"),
     RENAME_ITEM_DESCRIPTION("§7Cliquez ici pour renommer \n§7votre mascotte"),
 
+    BACK_TO_PETMENU_ITEM_NAME("§cRetour au menu"),
+    BACK_TO_PETMENU_ITEM_DESCRIPTION("§7Cliquez ici pour revenir \n§7au menu des mascottes"),
+
     TURNPAGE_ITEM_NAME("§6Tourner la page"),
     TURNPAGE_ITEM_DESCRIPTION("§7Cliquez §edroit§7 pour §eavancer \n§7Cliquez §agauche§7 pour §areculer"),
 
