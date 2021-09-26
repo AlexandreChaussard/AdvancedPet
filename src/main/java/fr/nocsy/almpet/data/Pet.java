@@ -219,7 +219,7 @@ public class Pet {
                                                                     p.getLocation().getZ());
                         MythicMobs.inst().getVolatileCodeHandler().getAIHandler().navigateToLocation(getInstance().getActiveMob().getEntity(), aloc, Double.POSITIVE_INFINITY);
                     }
-                    else if(distance > GlobalConfig.getInstance().getDistanceTeleport())
+                    else if(distance > GlobalConfig.getInstance().getDistanceTeleport() && !p.isFlying())
                     {
                         getInstance().teleportToPlayer(p);
                     }

@@ -62,6 +62,8 @@ public class Utils {
      */
     public static Location bruised(Location loc, double distance)
     {
+        Location origin = loc.clone();
+
         Random random = new Random();
         double r = Math.min(1, distance) + (Math.max(distance-0.1, 1) - Math.min(1, distance)) * random.nextDouble();
         double theta = 2*Math.PI * random.nextDouble();
@@ -72,11 +74,16 @@ public class Utils {
 
         loc = new Location(loc.getWorld(), x, y, z);
 
+        int threshHoldY = 5;
         int maxY = 0;
-        while(!loc.getBlock().isPassable() && maxY < loc.getWorld().getMaxHeight())
+        while(!loc.getBlock().isPassable() && maxY < threshHoldY)
         {
             loc.add(0, 1, 0);
             maxY++;
+        }
+        if(maxY == threshHoldY)
+        {
+            return origin;
         }
         return loc;
     }

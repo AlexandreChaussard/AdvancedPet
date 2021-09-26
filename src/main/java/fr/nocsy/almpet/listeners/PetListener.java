@@ -8,6 +8,7 @@ import fr.nocsy.almpet.data.GlobalConfig;
 import fr.nocsy.almpet.data.Pet;
 import fr.nocsy.almpet.data.inventories.PetInteractionMenu;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -16,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -110,6 +112,17 @@ public class PetListener implements Listener {
                 e.setCancelled(true);
             }
             return;
+        }
+    }
+
+    @EventHandler
+    public void gamemode(PlayerGameModeChangeEvent e)
+    {
+        UUID uuid = e.getPlayer().getUniqueId();
+        if(Pet.getActivePets().containsKey(uuid) && e.getNewGameMode() == GameMode.SPECTATOR)
+        {
+            Pet pet = Pet.getActivePets().get(uuid);
+            pet.despawn();
         }
     }
 
