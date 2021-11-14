@@ -10,19 +10,21 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Logger;
 
-public class AlmPet extends JavaPlugin {
+public class AdvancedPet extends JavaPlugin {
 
     @Getter
-    private static AlmPet instance;
+    private static AdvancedPet instance;
     @Getter
     private static Logger log = Bukkit.getLogger();
 
     @Getter
     private static String prefix = "§8[§»";
+
+    @Getter
+    private static String logName = "[AdvancedPet] : ";
 
     @Override
     public void onEnable(){
@@ -32,8 +34,8 @@ public class AlmPet extends JavaPlugin {
         EventListener.init(this);
 
         createConfigs();
-        getLog().info("-=-=-=-= AlmPet loaded =-=-=-=-");
-        getLog().info("    Nocsy sur la place !");
+        getLog().info("-=-=-=-= AdvancedPet loaded =-=-=-=-");
+        getLog().info("        Plugin made by Nocsy");
         getLog().info("-=-=-=-= -=-=-=-=-=-=- =-=-=-=-");
 
         try
@@ -41,15 +43,15 @@ public class AlmPet extends JavaPlugin {
             FlagsManager.init(this);
         } catch (IllegalPluginAccessException ex)
         {
-            getLog().warning("[AlmPet] : Le flag manager semble avoir rencontré une exception du type " + ex.getClass().getSimpleName());
+            getLog().warning(getLogName() + "Flag manager encountered an exception " + ex.getClass().getSimpleName());
         }
 
     }
 
     @Override
     public void onDisable(){
-        getLog().info("-=-=-=-= AlmPet disable =-=-=-=-");
-        getLog().info("Je sens que ça va être sex");
+        getLog().info("-=-=-=-= AdvancedPet disable =-=-=-=-");
+        getLog().info("            See you soon");
         getLog().info("-=-=-=-= -=-=-=-=-=-=- =-=-=-=-");
 
         Pet.clearPets();

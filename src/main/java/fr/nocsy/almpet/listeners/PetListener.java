@@ -1,17 +1,12 @@
 package fr.nocsy.almpet.listeners;
 
-import com.destroystokyo.paper.event.player.PlayerAttackEntityCooldownResetEvent;
-import com.ticxo.modelengine.api.ModelEngineAPI;
-import com.ticxo.modelengine.api.model.ModeledEntity;
-import fr.nocsy.almpet.AlmPet;
+import fr.nocsy.almpet.AdvancedPet;
 import fr.nocsy.almpet.data.GlobalConfig;
 import fr.nocsy.almpet.data.Pet;
 import fr.nocsy.almpet.data.inventories.PetInteractionMenu;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -19,7 +14,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.UUID;
@@ -41,7 +35,7 @@ public class PetListener implements Listener {
             (pet.getOwner().equals(p.getUniqueId()) || p.isOp()))
         {
             PetInteractionMenu menu = new PetInteractionMenu(pet);
-            p.setMetadata("AlmPetInteracted", new FixedMetadataValue(AlmPet.getInstance(), pet));
+            p.setMetadata("AlmPetInteracted", new FixedMetadataValue(AdvancedPet.getInstance(), pet));
             menu.open(p);
         }
     }
@@ -64,7 +58,7 @@ public class PetListener implements Listener {
                 (pet.getOwner().equals(p.getUniqueId()) || p.isOp()))
         {
             PetInteractionMenu menu = new PetInteractionMenu(pet);
-            p.setMetadata("AlmPetInteracted", new FixedMetadataValue(AlmPet.getInstance(), pet));
+            p.setMetadata("AlmPetInteracted", new FixedMetadataValue(AdvancedPet.getInstance(), pet));
             menu.open(p);
             e.setCancelled(true);
             e.setDamage(0);

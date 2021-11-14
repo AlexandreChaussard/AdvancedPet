@@ -1,13 +1,6 @@
 package fr.nocsy.almpet.data.flags;
 
-import com.sk89q.worldedit.util.Location;
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
-import com.sk89q.worldguard.protection.regions.RegionQuery;
-import fr.nocsy.almpet.AlmPet;
+import fr.nocsy.almpet.AdvancedPet;
 import fr.nocsy.almpet.data.Language;
 import fr.nocsy.almpet.data.Pet;
 import org.bukkit.Bukkit;
@@ -17,7 +10,7 @@ import java.util.UUID;
 
 public class DespawnPetFlag extends AbstractFlag implements StoppableFlag{
 
-    public DespawnPetFlag(AlmPet instance) {
+    public DespawnPetFlag(AdvancedPet instance) {
         super("despawnPet", false, instance);
     }
 
@@ -33,15 +26,15 @@ public class DespawnPetFlag extends AbstractFlag implements StoppableFlag{
     {
         if(getFlag() == null)
         {
-            AlmPet.getLog().warning("[AlmPet] : Impossible de lancer le flag " + getFlagName() + " car le flag est null. Contacter Nocsy.");
+            AdvancedPet.getLog().warning(AdvancedPet.getLogName() + "Flag " + getFlagName() + " couldn't not be launched as it's null. Please contact Nocsy.");
             return;
         }
         else
         {
-            AlmPet.getLog().info("[AlmPet] : Lancement du flag " + getFlagName() + ".");
+            AdvancedPet.getLog().info(AdvancedPet.getLogName() + "Starting flag " + getFlagName() + ".");
         }
 
-        task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(getAlmPetInstance(), new Runnable() {
+        task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(getAdvancedPetInstance(), new Runnable() {
             @Override
             public void run() {
 

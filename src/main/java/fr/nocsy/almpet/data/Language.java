@@ -1,52 +1,52 @@
 package fr.nocsy.almpet.data;
 
-import fr.nocsy.almpet.AlmPet;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public enum Language {
 
-    INVENTORY_PETS_MENU("§0☀ §4Mascottes §0☀"),
-    INVENTORY_PETS_MENU_INTERACTIONS("§0☀ §4Mascotte §0☀"),
+    INVENTORY_PETS_MENU("§0☀ §4Pets §0☀"),
+    INVENTORY_PETS_MENU_INTERACTIONS("§0☀ §4Pet §0☀"),
 
-    MOUNT_ITEM_NAME("§6Chevaucher"),
-    MOUNT_ITEM_DESCRIPTION("§7Cliquez ici pour monter \n§7sur votre mascotte"),
+    MOUNT_ITEM_NAME("§6Mount"),
+    MOUNT_ITEM_DESCRIPTION("§7Click to mount your pet"),
 
-    RENAME_ITEM_NAME("§6Renommer"),
-    RENAME_ITEM_DESCRIPTION("§7Cliquez ici pour renommer \n§7votre mascotte"),
+    RENAME_ITEM_NAME("§6Rename"),
+    RENAME_ITEM_DESCRIPTION("§7Click to rename your pet"),
 
-    BACK_TO_PETMENU_ITEM_NAME("§cRetour au menu"),
-    BACK_TO_PETMENU_ITEM_DESCRIPTION("§7Cliquez ici pour revenir \n§7au menu des mascottes"),
+    BACK_TO_PETMENU_ITEM_NAME("§cBack to menu"),
+    BACK_TO_PETMENU_ITEM_DESCRIPTION("§7Click to get back to the menu"),
 
-    TURNPAGE_ITEM_NAME("§6Tourner la page"),
-    TURNPAGE_ITEM_DESCRIPTION("§7Cliquez §edroit§7 pour §eavancer \n§7Cliquez §agauche§7 pour §areculer"),
+    TURNPAGE_ITEM_NAME("§6Next page"),
+    TURNPAGE_ITEM_DESCRIPTION("§eRight click§7 to go forward \n§aLeft click§7 to go backward"),
 
-    NICKNAME("§9Surnom : §7%nickname%"),
-    NICKNAME_ITEM_LORE("§cCliquez ici pour révoquer \n§cvotre mascotte"),
+    NICKNAME("§9Nickname : §7%nickname%"),
+    NICKNAME_ITEM_LORE("§cClick here to revoke your pet"),
 
-    SUMMONED("§7Une mascotte vient d'être invoquée !"),
-    REVOKED("§7Votre mascotte a été révoquée."),
-    REVOKED_FOR_NEW_ONE("§7Votre mascotte précédente a été révoquée afin d'invoquer la nouvelle."),
-    MYTHICMOB_NULL("§cImpossible d'invoquer cette mascotte. Le mythicMob associé est null."),
-    NO_MOB_MATCH("§cImpossible d'invoquer cette mascotte. Le mythicMob associé n'a pas été trouvé dans MythicMobs."),
-    NOT_ALLOWED("§cVous n'avez pas encore débloqué cette mascotte."),
-    OWNER_NOT_FOUND("§cImpossible d'invoquer cette mascotte. Le propriétaire n'a pas été trouvé."),
-    REVOKED_BEFORE_CHANGES("§cVotre mascotte a été révoquée avant que vous ne puissiez effectuer des modifications."),
-    NOT_MOUNTABLE("§cImpossible de monter sur cette mascotte."),
-    NOT_MOUNTABLE_HERE("§cVous ne pouvez pas monter votre mascotte dans cette zone."),
-    CANT_FOLLOW_HERE("§cVotre mascotte ne peut vous suivre dans cette zone."),
-    TYPE_NAME_IN_CHAT("§aÉcrivez dans le chat le nom que vous souhaitez donner à votre mascotte"),
-    IF_WISH_TO_REMOVE_NAME("§aSi vous souhaitez le retirer, écrivez §c%tag%§a dans le chat."),
-    NICKNAME_CHANGED_SUCCESSFULY("§aSurnom changé avec succès !"),
-    TAG_TO_REMOVE_NAME("Aucun"),
+    SUMMONED("§7A pet has been summoned !"),
+    REVOKED("§7Your pet was revoked."),
+    REVOKED_FOR_NEW_ONE("§7Your previous pet was revoked to summon the new one."),
+    MYTHICMOB_NULL("§cThis pet could not be summoned. The associated mythicMob is null."),
+    NO_MOB_MATCH("§cThis pet could not be summoned. The associated mythicmob isn't registered in MythicMobs."),
+    NOT_ALLOWED("§cYou're not allowed to summon this pet."),
+    OWNER_NOT_FOUND("§cThis pet could not be summoned. The summoner couldn't be found."),
+    REVOKED_BEFORE_CHANGES("§cYour pet was revoked before the modifications could take place."),
+    NOT_MOUNTABLE("§cThis pet has no mounting point."),
+    NOT_MOUNTABLE_HERE("§cYou can't ride a pet in this area."),
+    CANT_FOLLOW_HERE("§cYour pet can't follow you in this area."),
+    TYPE_NAME_IN_CHAT("§aRight down in the chat the name of your pet."),
+    IF_WISH_TO_REMOVE_NAME("§aSIf you wish to remove it, right §c%tag%§a in the chat."),
+    NICKNAME_CHANGED_SUCCESSFULY("§aNickname successfully changed !"),
+    TAG_TO_REMOVE_NAME("None"),
 
-    PLAYER_NOT_CONNECTED("§cLe joueur §6%player%§c n'est pas connecté."),
+    PLAYER_NOT_CONNECTED("§cThe player §6%player%§c isn't connected."),
 
-    RELOAD_SUCCESS("§aReload effectué avec succès."),
-    HOW_MANY_PETS_LOADED("§a%numberofpets% pets ont été enregistrés avec succès."),
+    RELOAD_SUCCESS("§aReloaded successfully."),
+    HOW_MANY_PETS_LOADED("§a%numberofpets% were registered successfully"),
 
-    USAGE("§7Utilisation : §6/almpet <reload/open/opento> <player>");
+    USAGE("§7Usage : §6/almpet <reload/open/opento> <player>"),
+    NO_PERM("§cYou're not allowed to use this command.");
 
     @Getter
     private String message;

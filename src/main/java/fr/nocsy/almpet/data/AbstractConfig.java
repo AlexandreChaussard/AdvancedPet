@@ -11,7 +11,7 @@ import java.io.IOException;
 public abstract class AbstractConfig {
 
     @Getter
-    private String path = "./plugins/AlmPet/";
+    private String path = "./plugins/AdvancedPet/";
 
     @Getter
     @Setter

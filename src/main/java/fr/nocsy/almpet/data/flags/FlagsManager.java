@@ -1,7 +1,7 @@
 package fr.nocsy.almpet.data.flags;
 
 import com.sk89q.worldguard.protection.flags.StateFlag;
-import fr.nocsy.almpet.AlmPet;
+import fr.nocsy.almpet.AdvancedPet;
 
 import java.util.ArrayList;
 
@@ -11,13 +11,13 @@ public class FlagsManager {
 
     private static ArrayList<AbstractFlag> flags = new ArrayList<>();
 
-    public static void init(AlmPet instance)
+    public static void init(AdvancedPet instance)
     {
         ArrayList<AbstractFlag> flags = new ArrayList<>();
 
         if(instance == null)
         {
-            AlmPet.getLog().warning("L'instance de la classe mère est null. Impossible d'enregistrer les flags.");
+            AdvancedPet.getLog().warning("The main instance is null. The flags could not be registered...");
             return;
         }
 

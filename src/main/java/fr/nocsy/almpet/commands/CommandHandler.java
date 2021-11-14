@@ -13,7 +13,7 @@ public class CommandHandler implements CommandExecutor {
 
     public static void init(JavaPlugin plugin) {
 
-        commands.add(new AlmPetCommand());
+        commands.add(new AdvancedPetCommand());
         for (CCommand c : commands) {
             plugin.getCommand(c.getName()).setExecutor(new CommandHandler());
         }

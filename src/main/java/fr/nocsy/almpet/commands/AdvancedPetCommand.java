@@ -10,15 +10,19 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AlmPetCommand implements CCommand {
+public class AdvancedPetCommand implements CCommand {
     @Override
     public String getName() {
-        return "almpet";
+        return "advancedpet";
     }
 
     @Override
     public String getPermission() {
-        return "almpet.admin";
+        return "advancedpet.use";
+    }
+
+    public String getAdminPermission() {
+        return "advancedpet.admin";
     }
 
     @Override
@@ -27,7 +31,9 @@ public class AlmPetCommand implements CCommand {
         {
             if(args.length == 2)
             {
-                if(args[0].equalsIgnoreCase("open") && sender instanceof Player)
+                if(args[0].equalsIgnoreCase("open")
+                        && sender.hasPermission(getAdminPermission())
+                        && sender instanceof Player)
                 {
                     String playerName = args[1];
                     Player playerToOpen = Bukkit.getPlayer(playerName);
@@ -41,7 +47,8 @@ public class AlmPetCommand implements CCommand {
                     menu.open((Player)sender);
                     return;
                 }
-                if(args[0].equalsIgnoreCase("opento"))
+                if(args[0].equalsIgnoreCase("opento")
+                        && sender.hasPermission(getAdminPermission()) )
                 {
                     String playerName = args[1];
                     Player playerToOpen = Bukkit.getPlayer(playerName);
@@ -58,7 +65,8 @@ public class AlmPetCommand implements CCommand {
             }
             else if(args.length == 1)
             {
-                if(args[0].equalsIgnoreCase("reload"))
+                if(args[0].equalsIgnoreCase("reload")
+                        && sender.hasPermission(getAdminPermission()) )
                 {
                     GlobalConfig.getInstance().reload();
                     LanguageConfig.getInstance().reload();
@@ -67,8 +75,20 @@ public class AlmPetCommand implements CCommand {
                     return;
                 }
             }
+            else if(args.length == 0
+                    && sender instanceof Player)
+            {
+                PetMenu menu = new PetMenu((Player)sender, 0, false);
+                menu.open((Player)sender);
+                return;
+            }
 
-            Language.USAGE.sendMessage(sender);
+            if(sender.hasPermission(getAdminPermission()))
+                Language.USAGE.sendMessage(sender);
+        }
+        else
+        {
+            Language.NO_PERM.sendMessage(sender);
         }
     }
 }

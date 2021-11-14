@@ -6,12 +6,11 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
-import fr.nocsy.almpet.AlmPet;
+import fr.nocsy.almpet.AdvancedPet;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
@@ -21,17 +20,17 @@ public abstract class AbstractFlag {
     private StateFlag flag;
 
     @Getter
-    private  final AlmPet almPetInstance;
+    private  final AdvancedPet advancedPetInstance;
     @Getter
     private final String flagName;
     @Getter
     private final boolean defaultValue;
 
-    public AbstractFlag(String flagName, boolean defaultValue, AlmPet instance)
+    public AbstractFlag(String flagName, boolean defaultValue, AdvancedPet instance)
     {
         this.flagName       = flagName;
         this.defaultValue   = defaultValue;
-        almPetInstance      = instance;
+        advancedPetInstance = instance;
     }
 
     /**
@@ -49,22 +48,22 @@ public abstract class AbstractFlag {
             registry.register(flag);
             this.flag = flag; // only set our field if there was no error
 
-            AlmPet.getLog().info("[AlmPet] : " + getFlagName() + " flag enregistré avec succès !");
+            AdvancedPet.getLog().info(AdvancedPet.getLogName() + getFlagName() + " flag registered successfully !");
 
         } catch (Exception e) {
-            AlmPet.getLog().warning("[AlmPet] : Une exception a été soulevée du type : " + e.getClass().getSimpleName());
-            AlmPet.getLog().warning("[AlmPet] : " + getFlagName() + " semble être en conflit avec une instance précédente de AlmPet. Essayons d'attacher le flag à l'instance précédente...");
+            AdvancedPet.getLog().warning(AdvancedPet.getLogName() + "Exception raised " + e.getClass().getSimpleName());
+            AdvancedPet.getLog().warning(AdvancedPet.getLogName() + getFlagName() + " seems to be conflicting with a previously existing instance of the plugin. Trying to attach the flag to the previous version...");
             // some other plugin registered a flag by the same name already.
             // you can use the existing flag, but this may cause conflicts - be sure to check type
             Flag<?> existing = registry.get(flagName);
-            AlmPet.getLog().warning("[AlmPet] : " + getFlagName() + " a été comptabilisé comme " + existing + " par Worldguard");
+            AdvancedPet.getLog().warning(AdvancedPet.getLogName() +  getFlagName() + " has been considered as " + existing + " by Worldguard");
             if (existing instanceof StateFlag) {
                 this.flag = (StateFlag) existing;
-                AlmPet.getLog().info("[AlmPet] : " + getFlagName() + " flag attaché avec succès !");
+                AdvancedPet.getLog().info(AdvancedPet.getLogName() +  getFlagName() + " flag attached successfully !");
             } else {
                 // types don't match - this is bad news! some other plugin conflicts with you
                 // hopefully this never actually happens
-                AlmPet.getLog().warning("[AlmPet] : " + getFlagName() + " flag n'a pas pu être attaché... Redémarrer le serveur pour fixer le problème.");
+                AdvancedPet.getLog().warning(AdvancedPet.getLogName() + getFlagName() + " Flag couldn't be attached... Server restart will be necessary to fix the issue.");
             }
 
         }

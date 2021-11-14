@@ -2,23 +2,21 @@ package fr.nocsy.almpet.data;
 
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import fr.nocsy.almpet.AlmPet;
+import com.ticxo.modelengine.api.mount.controller.MountController;
+import com.ticxo.modelengine.api.mount.handler.IMountHandler;
+import fr.nocsy.almpet.AdvancedPet;
 import fr.nocsy.almpet.data.inventories.PlayerData;
 import fr.nocsy.almpet.utils.Utils;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.adapters.AbstractLocation;
-import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter;
 import io.lumine.xikage.mythicmobs.api.exceptions.InvalidMobTypeException;
 import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
-import io.lumine.xikage.mythicmobs.mobs.MythicMob;
 import io.lumine.xikage.mythicmobs.skills.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -132,7 +130,7 @@ public class Pet {
             }
             Optional<ActiveMob> maybeHere = MythicMobs.inst().getMobManager().getActiveMob(ent.getUniqueId());
             maybeHere.ifPresent(mob -> activeMob = mob);
-            ent.setMetadata("AlmPet", new FixedMetadataValue(AlmPet.getInstance(), this));
+            ent.setMetadata("AlmPet", new FixedMetadataValue(AdvancedPet.getInstance(), this));
             if(ent.isInvulnerable() && GlobalConfig.getInstance().isLeftClickToOpen())
             {
                 this.invulnerable = true;
@@ -181,7 +179,7 @@ public class Pet {
     public void ia()
     {
 
-        task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(AlmPet.getInstance(), new Runnable() {
+        task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(AdvancedPet.getInstance(), new Runnable() {
 
             @Override
             public void run() {
@@ -338,7 +336,7 @@ public class Pet {
                         public void run() {
                             setNameTag(name, false);
                         }
-                    }.runTaskLater(AlmPet.getInstance(), 20L);
+                    }.runTaskLater(AdvancedPet.getInstance(), 20L);
 
                     if(save)
                     {
@@ -358,7 +356,7 @@ public class Pet {
                     public void run() {
                         setNameTag(name, true);
                     }
-                }.runTaskLater(AlmPet.getInstance(), 20L);
+                }.runTaskLater(AdvancedPet.getInstance(), 20L);
 
                 if(save)
                 {
@@ -371,7 +369,7 @@ public class Pet {
         }
         catch (Exception ex)
         {
-            AlmPet.getLog().warning("[AlmPet] : Une exception " + ex.getClass().getSimpleName() + " a été soulevé par setDisplayName(" + Language.TAG_TO_REMOVE_NAME.getMessage() + "), concernant le pet " + this.id);
+            AdvancedPet.getLog().warning("[AlmPet] : Une exception " + ex.getClass().getSimpleName() + " a été soulevé par setDisplayName(" + Language.TAG_TO_REMOVE_NAME.getMessage() + "), concernant le pet " + this.id);
             ex.printStackTrace();
         }
     }
@@ -407,8 +405,14 @@ public class Pet {
             if (localModeledEntity == null) {
                 return false;
             }
-            localModeledEntity.setMountController("standard");
-            localModeledEntity.addPassenger(ent);
+            IMountHandler localIMountHandler = localModeledEntity.getMountHandler();
+
+            MountController localMountController = ModelEngineAPI.api.getControllerManager().createController("flying");
+            if (localMountController == null) {
+                localMountController = ModelEngineAPI.api.getControllerManager().createController("walking");
+            }
+            localIMountHandler.setDriver(ent, localMountController);
+            localIMountHandler.setCanDamageMount(ent, false);
             return true;
         }
         return false;
@@ -427,8 +431,9 @@ public class Pet {
             if (localModeledEntity == null) {
                 return false;
             }
-            localModeledEntity.setMountController("standard");
-            return localModeledEntity.hasPassenger(ent);
+            IMountHandler localIMountHandler = localModeledEntity.getMountHandler();
+
+            return localIMountHandler.hasDriver() || localIMountHandler.hasPassengers();
         }
         return false;
     }
@@ -445,7 +450,9 @@ public class Pet {
             if (localModeledEntity == null) {
                 return;
             }
-            localModeledEntity.removePassenger(ent);
+            IMountHandler localIMountHandler = localModeledEntity.getMountHandler();
+            localIMountHandler.removePassenger(ent);
+            localIMountHandler.setDriver(null);
         }
 
     }

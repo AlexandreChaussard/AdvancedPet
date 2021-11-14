@@ -1,6 +1,6 @@
 package fr.nocsy.almpet.data;
 
-import fr.nocsy.almpet.AlmPet;
+import fr.nocsy.almpet.AdvancedPet;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -55,6 +55,6 @@ public class LanguageConfig extends AbstractConfig {
             lang.reload();
         }
 
-        AlmPet.getLog().info("[AlmPet] : Langage mis à jour.");
+        AdvancedPet.getLog().info(AdvancedPet.getLogName() + "Language file reloaded.");
     }
 }

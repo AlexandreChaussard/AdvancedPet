@@ -1,6 +1,6 @@
 package fr.nocsy.almpet.data;
 
-import fr.nocsy.almpet.AlmPet;
+import fr.nocsy.almpet.AdvancedPet;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.skills.Skill;
 import lombok.Getter;
@@ -15,9 +15,9 @@ public class GlobalConfig extends AbstractConfig {
     public static GlobalConfig instance;
 
     @Getter
-    private String prefix = "§8[§6Mascotte§8] »";
+    private String prefix = "§8[§6AdvancedPet§8] »";
     @Getter
-    private String defaultName = "§9Mascotte de %player%";
+    private String defaultName = "§9Pet of %player%";
     @Getter
     private boolean nameable;
     @Getter
@@ -114,11 +114,11 @@ public class GlobalConfig extends AbstractConfig {
                         textureBase64   == null ||
                         description     == null)
                 {
-                    AlmPet.getLog().warning("[AlmPet] : Impossible d'enregistrer ce pet. Veuillez vérifier le fichier de configuration");
-                    AlmPet.getLog().warning("[AlmPet] : Informations sur le pet non enregistré : ");
-                    AlmPet.getLog().warning("id : " + id);
-                    AlmPet.getLog().warning("mobType : " + mobType);
-                    AlmPet.getLog().warning("permission : " + permission);
+                    AdvancedPet.getLog().warning(AdvancedPet.getLogName() + "This pet could not be registered. Please check the configuration file to make sure you didn't miss anything.");
+                    AdvancedPet.getLog().warning(AdvancedPet.getLogName() + "Information about the registered pet : ");
+                    AdvancedPet.getLog().warning("id : " + id);
+                    AdvancedPet.getLog().warning("mobType : " + mobType);
+                    AdvancedPet.getLog().warning("permission : " + permission);
                     continue;
                 }
 
@@ -144,10 +144,10 @@ public class GlobalConfig extends AbstractConfig {
                             }
                             if(pet.getDespawnSkill() == null)
                             {
-                                AlmPet.getLog().warning("[AlmPet] : Impossible d'associer le despawn skill \"" + despawnSkillName + "\" au pet \"" + pet.getId() + "\", car le skill n'existe pas.");
+                                AdvancedPet.getLog().warning(AdvancedPet.getLogName() + "Impossible to reach the despawn skill \"" + despawnSkillName + "\" to the pet \"" + pet.getId() + "\", because this skill doesn't exist.");
                             }
                         }
-                    }.runTaskLater(AlmPet.getInstance(), 5L);
+                    }.runTaskLater(AdvancedPet.getInstance(), 5L);
                 }
 
                 pet.buildIcon(iconName, description, textureBase64);
@@ -157,7 +157,7 @@ public class GlobalConfig extends AbstractConfig {
             }
         }
 
-        AlmPet.getLog().info("[AlmPet] : " + howManyLoaded + " pets enregistrés avec succès !");
+        AdvancedPet.getLog().info(AdvancedPet.getLogName() + howManyLoaded + " pets registered successfully !");
     }
 
 }
