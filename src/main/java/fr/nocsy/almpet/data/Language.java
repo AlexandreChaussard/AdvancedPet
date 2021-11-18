@@ -39,13 +39,18 @@ public enum Language {
     IF_WISH_TO_REMOVE_NAME("§aSIf you wish to remove it, right §c%tag%§a in the chat."),
     NICKNAME_CHANGED_SUCCESSFULY("§aNickname successfully changed !"),
     TAG_TO_REMOVE_NAME("None"),
-
+    ALREADY_INSIDE_VEHICULE("§7You're already mounting something. Please dismount your current mount to use this feature."),
+    PET_DOESNT_EXIST("§cThis pet doesn't exist. Please check the id."),
     PLAYER_NOT_CONNECTED("§cThe player §6%player%§c isn't connected."),
 
     RELOAD_SUCCESS("§aReloaded successfully."),
     HOW_MANY_PETS_LOADED("§a%numberofpets% were registered successfully"),
 
-    USAGE("§7Usage : §6/almpet <reload/open/opento> <player>"),
+    USAGE("§7Usage : §6/almpet §8..." +
+                                        "\n§8   ... §areload " +
+                                        "\n§8   ... §7(nothing here to open the GUI) " +
+                                        "\n§8   ... §aopen §8<§7player§8>" +
+                                        "\n§8   ... §aspawn §8<§7id§8> <§7player§8> §atrue§8/§cfalse §7(check if the player have the permission to spawn the pet or not)"),
     NO_PERM("§cYou're not allowed to use this command.");
 
     @Getter

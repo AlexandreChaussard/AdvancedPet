@@ -45,29 +45,7 @@ public class PetMenuListener implements Listener {
                 {
                     p.closeInventory();
                     Pet pet = petObject.copy();
-                    int executed = pet.spawn(p, p.getLocation());
-
-                    switch(executed)
-                    {
-                        case Pet.DESPAWNED_PREVIOUS:
-                            Language.REVOKED_FOR_NEW_ONE.sendMessage(p);
-                            break;
-                        case Pet.MOB_SPAWN:
-                            Language.SUMMONED.sendMessage(p);
-                            break;
-                        case Pet.MYTHIC_MOB_NULL:
-                            Language.MYTHICMOB_NULL.sendMessage(p);
-                            break;
-                        case Pet.NO_MOB_MATCH:
-                            Language.NO_MOB_MATCH.sendMessage(p);
-                            break;
-                        case Pet.NOT_ALLOWED:
-                            Language.NOT_ALLOWED.sendMessage(p);
-                            break;
-                        case Pet.OWNER_NULL:
-                            Language.OWNER_NOT_FOUND.sendMessage(p);
-                            break;
-                    }
+                    pet.spawnWithMessage(p, p.getLocation());
                 }
             }
 

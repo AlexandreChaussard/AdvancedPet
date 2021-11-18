@@ -2,8 +2,12 @@ package fr.nocsy.almpet.listeners;
 
 import fr.nocsy.almpet.AdvancedPet;
 import fr.nocsy.almpet.data.GlobalConfig;
+import fr.nocsy.almpet.data.Language;
 import fr.nocsy.almpet.data.Pet;
 import fr.nocsy.almpet.data.inventories.PetInteractionMenu;
+import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
+import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDespawnEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -94,6 +98,10 @@ public class PetListener implements Listener {
 
     }
 
+    /**
+     * Wtf is this doing seriously ? Makes no sense.
+     * @param e
+     */
     @EventHandler
     public void damaged(EntityDamageEvent e)
     {
@@ -117,6 +125,56 @@ public class PetListener implements Listener {
         {
             Pet pet = Pet.getActivePets().get(uuid);
             pet.despawn();
+        }
+    }
+
+    /**
+     * Handle random despawn
+     * @param e
+     */
+    @EventHandler
+    public void despawn(MythicMobDespawnEvent e)
+    {
+        if(e.getEntity() != null)
+        {
+            Pet pet = Pet.getFromEntity(e.getEntity());
+            if(pet != null)
+            {
+                if(!pet.isRemoved())
+                {
+                    pet.despawn();
+                    Player owner = Bukkit.getPlayer(pet.getOwner());
+                    if(owner != null)
+                    {
+                        Language.REVOKED.sendMessage(owner);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Handle death of the pet
+     * @param e
+     */
+    @EventHandler
+    public void death(MythicMobDeathEvent e)
+    {
+        if(e.getEntity() != null)
+        {
+            Pet pet = Pet.getFromEntity(e.getEntity());
+            if(pet != null)
+            {
+                if(!pet.isRemoved())
+                {
+                    pet.despawn();
+                    Player owner = Bukkit.getPlayer(pet.getOwner());
+                    if(owner != null)
+                    {
+                        Language.REVOKED.sendMessage(owner);
+                    }
+                }
+            }
         }
     }
 

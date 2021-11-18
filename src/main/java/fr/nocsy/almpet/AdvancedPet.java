@@ -1,9 +1,7 @@
 package fr.nocsy.almpet;
 
 import fr.nocsy.almpet.commands.CommandHandler;
-import fr.nocsy.almpet.data.GlobalConfig;
-import fr.nocsy.almpet.data.LanguageConfig;
-import fr.nocsy.almpet.data.Pet;
+import fr.nocsy.almpet.data.*;
 import fr.nocsy.almpet.data.flags.FlagsManager;
 import fr.nocsy.almpet.listeners.EventListener;
 import lombok.Getter;
@@ -33,7 +31,7 @@ public class AdvancedPet extends JavaPlugin {
         CommandHandler.init(this);
         EventListener.init(this);
 
-        createConfigs();
+        loadConfigs();
         getLog().info("-=-=-=-= AdvancedPet loaded =-=-=-=-");
         getLog().info("        Plugin made by Nocsy");
         getLog().info("-=-=-=-= -=-=-=-=-=-=- =-=-=-=-");
@@ -59,9 +57,10 @@ public class AdvancedPet extends JavaPlugin {
 
     }
 
-    private void createConfigs(){
+    public static void loadConfigs(){
         GlobalConfig.getInstance().init();
         LanguageConfig.getInstance().init();
+        PetConfig.loadPets(AbstractConfig.getPath() + "Pets/", true);
     }
 
 }

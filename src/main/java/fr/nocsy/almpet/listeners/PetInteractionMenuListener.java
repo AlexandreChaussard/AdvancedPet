@@ -60,7 +60,11 @@ public class PetInteractionMenuListener implements Listener {
 
                 if(it.isSimilar(Items.MOUNT.getItem()))
                 {
-                    if(!pet.setMount(p))
+                    if(p.isInsideVehicle())
+                    {
+                        Language.ALREADY_INSIDE_VEHICULE.sendMessage(p);
+                    }
+                    else if(!pet.setMount(p))
                     {
                         Language.NOT_MOUNTABLE.sendMessage(p);
                     }
