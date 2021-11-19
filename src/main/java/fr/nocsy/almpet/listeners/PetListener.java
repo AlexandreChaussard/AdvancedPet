@@ -18,7 +18,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
@@ -78,6 +80,18 @@ public class PetListener implements Listener {
             Pet pet = Pet.getActivePets().get(p.getUniqueId());
             pet.despawn();
             pet.spawn(p, p.getLocation());
+        }
+
+    }
+
+    @EventHandler
+    public void teleport(PlayerTeleportEvent e)
+    {
+        Player p = e.getPlayer();
+        if(Pet.getActivePets().containsKey(p.getUniqueId()))
+        {
+            Pet pet = Pet.getActivePets().get(p.getUniqueId());
+            pet.dismount(p);
         }
 
     }

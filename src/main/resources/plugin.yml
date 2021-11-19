@@ -1,6 +1,6 @@
 name: AdvancedPet
 main: fr.nocsy.almpet.AdvancedPet
-version: 0.2.0
+version: 0.2.1
 description: Plugin made by Nocsy
 depends: [WorldGuard, MythicMobs, ModelEngine vR2.2.0]
 author: Nocsy

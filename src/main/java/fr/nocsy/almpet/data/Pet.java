@@ -138,6 +138,10 @@ public class Pet {
             return MYTHIC_MOB_NULL;
         else if(owner == null)
             return OWNER_NULL;
+        else if(Pet.getActivePets().containsKey(owner))
+        {
+            Pet.getActivePets().get(owner).despawn();
+        }
 
         try {
 
