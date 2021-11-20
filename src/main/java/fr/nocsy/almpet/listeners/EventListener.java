@@ -1,5 +1,6 @@
 package fr.nocsy.almpet.listeners;
 
+import fr.nocsy.almpet.mythicmobs.MythicListener;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +15,8 @@ public class EventListener implements Listener {
         listeners.add(new PetMenuListener());
         listeners.add(new PetInteractionMenuListener());
         listeners.add(new PetListener());
+
+        listeners.add(new MythicListener());
 
         for (Listener l : listeners) {
             plugin.getServer().getPluginManager().registerEvents(l, plugin);

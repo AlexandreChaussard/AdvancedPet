@@ -84,6 +84,10 @@ public class Pet {
     @Setter
     private boolean autoRide;
 
+    @Setter
+    @Getter
+    private String mountType;
+
     //********** Living entity **********
 
     @Setter
@@ -266,6 +270,9 @@ public class Pet {
 
                 if(p != null)
                 {
+                    if(p.isDead())
+                        return;
+
                     Location ownerLoc = p.getLocation();
                     Location petLoc = getInstance().getActiveMob().getEntity().getBukkitEntity().getLocation();
 
@@ -461,6 +468,7 @@ public class Pet {
         pet.setDistance(distance);
         pet.setDespawnSkill(despawnSkill);
         pet.setMountable(mountable);
+        pet.setMountType(mountType);
         pet.setAutoRide(autoRide);
         pet.setIcon(icon);
         pet.setOwner(owner);
@@ -483,7 +491,7 @@ public class Pet {
             }
             IMountHandler localIMountHandler = localModeledEntity.getMountHandler();
 
-            MountController localMountController = ModelEngineAPI.api.getControllerManager().createController("flying");
+            MountController localMountController = ModelEngineAPI.api.getControllerManager().createController(mountType);
             if (localMountController == null) {
                 localMountController = ModelEngineAPI.api.getControllerManager().createController("walking");
             }

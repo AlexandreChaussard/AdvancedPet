@@ -52,6 +52,7 @@ public class PetConfig extends AbstractConfig {
         String iconName             = getConfig().getString("Icon.Name");
         String textureBase64        = getConfig().getString("Icon.TextureBase64");
         boolean autoRide            = getConfig().getBoolean("AutoRide");
+        String mountType            = getConfig().getString("MountType");
         List<String> description    = getConfig().getStringList("Icon.Description");
 
         if( id              == null ||
@@ -78,8 +79,11 @@ public class PetConfig extends AbstractConfig {
         } else {
             pet.setMountable(getConfig().getBoolean("Mountable"));
         }
+        if(mountType == null)
+            mountType = "walking";
         pet.setAutoRide(autoRide);
         pet.setDistance(distance);
+        pet.setMountType(mountType);
 
         if(despawnSkillName != null)
         {

@@ -1,22 +1,25 @@
 package fr.nocsy.almpet.data.inventories;
 
-import fr.nocsy.almpet.data.AbstractConfig;
+import fr.nocsy.almpet.AdvancedPet;
+import fr.nocsy.almpet.data.GlobalConfig;
+import fr.nocsy.almpet.data.sql.Databases;
 import lombok.Getter;
-import org.bukkit.entity.Player;
+import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PlayerData extends AbstractConfig {
+public class PlayerData {
 
     @Getter
-    public static HashMap<UUID, PlayerData> registeredData = new HashMap<>();
+    private static HashMap<UUID, PlayerData> registeredData = new HashMap<>();
     @Getter
-    public HashMap<String, String> mapOfRegisteredNames = new HashMap<>();
+    @Setter
+    private HashMap<String, String> mapOfRegisteredNames = new HashMap<>();
 
+    @Setter
     @Getter
-    private final UUID uuid;
+    private UUID uuid;
 
     private PlayerData(UUID uuid)
     {
@@ -24,61 +27,76 @@ public class PlayerData extends AbstractConfig {
         init();
         save();
     }
+    private PlayerData() {}
 
     public static PlayerData get(UUID owner)
     {
+
         if(registeredData.containsKey(owner))
         {
             return registeredData.get(owner);
         }
         else
         {
+            if(!GlobalConfig.getInstance().isDatabaseSupport())
+            {
+                PlayerData data = new PlayerData();
+                data.setUuid(owner);
+                PlayerDataNoDatabase pdn = PlayerDataNoDatabase.get(owner);
+                data.setMapOfRegisteredNames(pdn.mapOfRegisteredNames);
+                registeredData.put(owner, data);
+
+                return data;
+            }
+
             PlayerData data = new PlayerData(owner);
             registeredData.put(owner, data);
             return data;
         }
     }
 
+    public static PlayerData getEmpty(UUID owner)
+    {
+        PlayerData data = new PlayerData();
+        data.setUuid(owner);
+        return data;
+    }
+
     public void init()
     {
-        super.init("PlayerData", uuid.toString() + ".yml");
-
-        if(getConfig().get("Names") == null)
-            getConfig().set("Names", new ArrayList<String>());
-
         reload();
     }
 
-    @Override
-    public void save() {
-
-        ArrayList<String> serializedMap = new ArrayList<>();
-
-        for(String id : mapOfRegisteredNames.keySet())
-        {
-            String name = mapOfRegisteredNames.get(id);
-            String seria = id + ";" + name;
-            serializedMap.add(seria);
-        }
-
-        getConfig().set("Names", serializedMap);
-
-        super.save();
+    public static void initAll()
+    {
+        reloadAll();
     }
 
-    @Override
-    public void reload() {
-
-        mapOfRegisteredNames.clear();
-
-        for(String seria : getConfig().getStringList("Names"))
+    public void save() {
+        if(GlobalConfig.getInstance().isDatabaseSupport())
+            saveDB();
+        else
         {
-            String[] table = seria.split(";");
-            String id = table[0];
-            String name = table[1];
-
-            mapOfRegisteredNames.put(id, name);
+            PlayerDataNoDatabase pdn = PlayerDataNoDatabase.get(uuid);
+            pdn.setMapOfRegisteredNames(mapOfRegisteredNames);
+            pdn.save();
         }
+    }
 
+    public static void saveDB()
+    {
+        Databases.saveData();
+    }
+
+    public void reload()
+    {
+        if(!Databases.loadData())
+        {
+            PlayerDataNoDatabase.get(uuid).reload();
+        }
+    }
+
+    public static void reloadAll() {
+        Databases.loadData();
     }
 }

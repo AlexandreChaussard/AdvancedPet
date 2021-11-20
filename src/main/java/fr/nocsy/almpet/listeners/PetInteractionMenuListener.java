@@ -103,6 +103,7 @@ public class PetInteractionMenuListener implements Listener {
             e.setCancelled(true);
 
             String name = e.getMessage();
+            name = name.replace(";;", ";").replace(";;;", ";");
             name = ChatColor.translateAlternateColorCodes('&', name);
 
             Pet pet = Pet.getFromLastInteractedWith(p);

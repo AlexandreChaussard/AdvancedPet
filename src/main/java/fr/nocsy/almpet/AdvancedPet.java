@@ -3,6 +3,8 @@ package fr.nocsy.almpet;
 import fr.nocsy.almpet.commands.CommandHandler;
 import fr.nocsy.almpet.data.*;
 import fr.nocsy.almpet.data.flags.FlagsManager;
+import fr.nocsy.almpet.data.inventories.PlayerData;
+import fr.nocsy.almpet.data.sql.Databases;
 import fr.nocsy.almpet.listeners.EventListener;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -53,6 +55,7 @@ public class AdvancedPet extends JavaPlugin {
         getLog().info("-=-=-=-= -=-=-=-=-=-=- =-=-=-=-");
 
         Pet.clearPets();
+        PlayerData.saveDB();
         FlagsManager.stopFlags();
 
     }
@@ -61,6 +64,8 @@ public class AdvancedPet extends JavaPlugin {
         GlobalConfig.getInstance().init();
         LanguageConfig.getInstance().init();
         PetConfig.loadPets(AbstractConfig.getPath() + "Pets/", true);
+        Databases.init();
+        PlayerData.initAll();
     }
 
 }

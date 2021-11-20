@@ -20,7 +20,6 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
@@ -33,6 +32,10 @@ public class PetListener implements Listener {
             return;
 
         Player p = e.getPlayer();
+
+        if(GlobalConfig.getInstance().isSneakMode() && !p.isSneaking())
+            return;
+
         Entity ent = e.getRightClicked();
 
         Pet pet = Pet.getFromEntity(ent);
@@ -56,6 +59,10 @@ public class PetListener implements Listener {
             return;
 
         Player p = (Player)e.getDamager();
+
+        if(GlobalConfig.getInstance().isSneakMode() && !p.isSneaking())
+            return;
+
         Entity ent = e.getEntity();
 
         Pet pet = Pet.getFromEntity(ent);
