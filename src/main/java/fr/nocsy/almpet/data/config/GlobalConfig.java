@@ -1,6 +1,5 @@
-package fr.nocsy.almpet.data;
+package fr.nocsy.almpet.data.config;
 
-import fr.nocsy.almpet.AdvancedPet;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,9 +8,15 @@ public class GlobalConfig extends AbstractConfig {
     public static GlobalConfig instance;
 
     @Getter
+    @Setter
+    private boolean worldguardsupport = true;
+
+    @Getter
     private String prefix = "§8[§6AdvancedPet§8] »";
     @Getter
     private String defaultName = "§9Pet of %player%";
+    @Getter
+    private int adaptiveInventory = -1;
     @Getter
     private boolean nameable;
     @Getter
@@ -72,6 +77,8 @@ public class GlobalConfig extends AbstractConfig {
             getConfig().set("DistanceTeleport", 30);
         if(getConfig().get("MaxNameLenght") == null)
             getConfig().set("MaxNameLenght", maxNameLenght);
+        if(getConfig().get("InventorySize") == null)
+            getConfig().set("InventorySize", -1);
         if (getConfig().get("MySQL.User") == null)
             getConfig().set("MySQL.User", "user");
         if (getConfig().get("MySQL.Password") == null)
@@ -106,6 +113,16 @@ public class GlobalConfig extends AbstractConfig {
         mountable           = getConfig().getBoolean("Mountable");
         distanceTeleport    = getConfig().getInt("DistanceTeleport");
         maxNameLenght       = getConfig().getInt("MaxNameLenght");
+        adaptiveInventory   = getConfig().getInt("InventorySize");
+        // Says it'll be an adaptive inventory
+        if(adaptiveInventory <= 0)
+            adaptiveInventory = -1;
+        // Inventory can't grow over 54
+        if(adaptiveInventory > 54)
+            adaptiveInventory = 54;
+        // Get the size of the inventory to place
+        while (adaptiveInventory > 0 && adaptiveInventory % 9 != 0 && adaptiveInventory < 54)
+            adaptiveInventory++;
 
         MySQL_USER          = getConfig().getString("MySQL.User");
         MySQL_PASSWORD      = getConfig().getString("MySQL.Password");

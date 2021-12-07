@@ -1,11 +1,13 @@
 package fr.nocsy.almpet.listeners;
 
-import fr.nocsy.almpet.data.FormatArg;
-import fr.nocsy.almpet.data.Items;
-import fr.nocsy.almpet.data.Language;
-import fr.nocsy.almpet.data.Pet;
+import fr.nocsy.almpet.PPermission;
+import fr.nocsy.almpet.data.*;
+import fr.nocsy.almpet.data.config.BlacklistConfig;
+import fr.nocsy.almpet.data.config.FormatArg;
+import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.inventories.PetInteractionMenu;
 import fr.nocsy.almpet.data.inventories.PetMenu;
+import fr.nocsy.almpet.utils.Utils;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -38,6 +40,7 @@ public class PetInteractionMenuListener implements Listener {
             ItemStack it = e.getCurrentItem();
             if(it != null && it.hasItemMeta() && it.getItemMeta().hasDisplayName())
             {
+
                 if(it.getItemMeta().hasLocalizedName() && it.getItemMeta().getLocalizedName().equals(Items.PETMENU.getItem().getItemMeta().getLocalizedName()))
                 {
                     openBackPetMenu(p);
@@ -45,6 +48,7 @@ public class PetInteractionMenuListener implements Listener {
                 }
 
                 Pet pet = Pet.getFromLastInteractedWith(p);
+
                 if(pet == null)
                 {
                     p.closeInventory();
@@ -58,29 +62,21 @@ public class PetInteractionMenuListener implements Listener {
                     return;
                 }
 
-                if(it.isSimilar(Items.MOUNT.getItem()))
+                if(e.getSlot() == 2)
                 {
-                    if(p.isInsideVehicle())
-                    {
-                        Language.ALREADY_INSIDE_VEHICULE.sendMessage(p);
-                    }
-                    else if(!pet.setMount(p))
-                    {
-                        Language.NOT_MOUNTABLE.sendMessage(p);
-                    }
+                    revoke(p, pet);
+                }
+                else if(it.isSimilar(Items.MOUNT.getItem()))
+                {
+                    mount(p, pet);
                 }
                 else if(it.isSimilar(Items.RENAME.getItem()))
                 {
-                    if(!waitingForAnswer.contains(p.getUniqueId()))
-                        waitingForAnswer.add(p.getUniqueId());
-
-                    Language.TYPE_NAME_IN_CHAT.sendMessage(p);
-                    Language.IF_WISH_TO_REMOVE_NAME.sendMessageFormated(p, new FormatArg("%tag%", Language.TAG_TO_REMOVE_NAME.getMessage()));
+                    changeName(p);
                 }
-                else if(e.getSlot() == 2)
+                else if(it.isSimilar(pet.getSignalStick()))
                 {
-                    pet.despawn();
-                    Language.REVOKED.sendMessage(p);
+                    pet.giveStickSignals(p);
                 }
                 p.closeInventory();
             }
@@ -90,7 +86,7 @@ public class PetInteractionMenuListener implements Listener {
     }
 
     @Getter
-    private ArrayList<UUID> waitingForAnswer = new ArrayList<>();
+    private static ArrayList<UUID> waitingForAnswer = new ArrayList<>();
 
     @EventHandler
     public void chat(AsyncPlayerChatEvent e)
@@ -104,12 +100,22 @@ public class PetInteractionMenuListener implements Listener {
 
             String name = e.getMessage();
             name = name.replace(";;", ";").replace(";;;", ";");
-            name = ChatColor.translateAlternateColorCodes('&', name);
+            name = Utils.hex(name);
+
+            String blackListedWord = Utils.isInBlackList(name);
+            if(blackListedWord != null)
+            {
+                Language.BLACKLISTED_WORD.sendMessageFormated(p, new FormatArg("%word%", blackListedWord));
+                return;
+            }
 
             Pet pet = Pet.getFromLastInteractedWith(p);
 
             if(pet != null && pet.isStillHere())
             {
+                if(!p.hasPermission(PPermission.COLOR.getPermission()))
+                    name = ChatColor.stripColor(name);
+                
                 pet.setDisplayName(name, true);
 
                 Language.NICKNAME_CHANGED_SUCCESSFULY.sendMessage(p);
@@ -128,6 +134,32 @@ public class PetInteractionMenuListener implements Listener {
 
         PetMenu menu = new PetMenu(p, 0, false);
         menu.open(p);
+    }
+
+    public static void changeName(Player p)
+    {
+        if(!waitingForAnswer.contains(p.getUniqueId()))
+            waitingForAnswer.add(p.getUniqueId());
+        Language.TYPE_NAME_IN_CHAT.sendMessage(p);
+        Language.IF_WISH_TO_REMOVE_NAME.sendMessageFormated(p, new FormatArg("%tag%", Language.TAG_TO_REMOVE_NAME.getMessage()));
+    }
+
+    public static void mount(Player p, Pet pet)
+    {
+        if(p.isInsideVehicle())
+        {
+            Language.ALREADY_INSIDE_VEHICULE.sendMessage(p);
+        }
+        else if(!pet.setMount(p))
+        {
+            Language.NOT_MOUNTABLE.sendMessage(p);
+        }
+    }
+
+    public static void revoke(Player p, Pet pet)
+    {
+        pet.despawn();
+        Language.REVOKED.sendMessage(p);
     }
 
 }

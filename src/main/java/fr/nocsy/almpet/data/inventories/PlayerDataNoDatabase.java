@@ -1,9 +1,8 @@
 package fr.nocsy.almpet.data.inventories;
 
-import fr.nocsy.almpet.data.AbstractConfig;
+import fr.nocsy.almpet.data.config.AbstractConfig;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;

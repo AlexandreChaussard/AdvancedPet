@@ -1,7 +1,6 @@
 package fr.nocsy.almpet.data.inventories;
 
-import fr.nocsy.almpet.AdvancedPet;
-import fr.nocsy.almpet.data.GlobalConfig;
+import fr.nocsy.almpet.data.config.GlobalConfig;
 import fr.nocsy.almpet.data.sql.Databases;
 import lombok.Getter;
 import lombok.Setter;

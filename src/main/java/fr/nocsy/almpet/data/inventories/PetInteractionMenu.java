@@ -1,8 +1,8 @@
 package fr.nocsy.almpet.data.inventories;
 
-import fr.nocsy.almpet.data.GlobalConfig;
+import fr.nocsy.almpet.data.config.GlobalConfig;
 import fr.nocsy.almpet.data.Items;
-import fr.nocsy.almpet.data.Language;
+import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.Pet;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -10,8 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-
-import java.util.List;
 
 public class PetInteractionMenu {
 
@@ -39,7 +37,12 @@ public class PetInteractionMenu {
         else
             inventory.setItem(3, Items.deco(Material.LIGHT_BLUE_STAINED_GLASS_PANE));
 
-        inventory.setItem(4, Items.deco(Material.BLUE_STAINED_GLASS_PANE));
+        if(!pet.getSignals().isEmpty())
+        {
+            inventory.setItem(4, pet.getSignalStick());
+        }
+        else
+            inventory.setItem(4, Items.deco(Material.LIGHT_BLUE_STAINED_GLASS_PANE));
     }
 
     public void open(Player p)

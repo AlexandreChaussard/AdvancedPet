@@ -1,13 +1,13 @@
-package fr.nocsy.almpet.data;
+package fr.nocsy.almpet.data.config;
 
 import fr.nocsy.almpet.AdvancedPet;
+import fr.nocsy.almpet.data.Pet;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.skills.Skill;
 import lombok.Getter;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,19 +48,29 @@ public class PetConfig extends AbstractConfig {
         String mobType              = getConfig().getString("MythicMob");
         String permission           = getConfig().getString("Permission");
         int distance                = getConfig().getInt("Distance");
+        int spawnRange              = getConfig().getInt("SpawnRange");
+        int comingbackRange         = getConfig().getInt("ComingBackRange");
         String despawnSkillName     = getConfig().getString("DespawnSkill");
-        String iconName             = getConfig().getString("Icon.Name");
-        String textureBase64        = getConfig().getString("Icon.TextureBase64");
         boolean autoRide            = getConfig().getBoolean("AutoRide");
         String mountType            = getConfig().getString("MountType");
+
+        String iconName             = getConfig().getString("Icon.Name");
+        String materialType         = getConfig().getString("Icon.Material");
+        int customModelData         = getConfig().getInt("Icon.CustomModelData");
+        String textureBase64        = getConfig().getString("Icon.TextureBase64");
         List<String> description    = getConfig().getStringList("Icon.Description");
+
+        List<String> signals                    = getConfig().getStringList("Signals.Values");
+        String signalStick_Name                 = getConfig().getString("Signals.Item.Name");
+        String signalStick_Mat                  = getConfig().getString("Signals.Item.Material");
+        int signalStick_Data                    = getConfig().getInt("Signals.Item.CustomModelData");
+        String signalStick_64                   = getConfig().getString("Signals.Item.TextureBase64");
+        List<String> signalStick_Description    = getConfig().getStringList("Signals.Item.Description");
 
         if( id              == null ||
                 mobType         == null ||
                 permission      == null ||
-                iconName        == null ||
-                textureBase64   == null ||
-                description     == null)
+                iconName        == null)
         {
             // Warning case on which something essential would be missing
             AdvancedPet.getLog().warning(AdvancedPet.getLogName() + "This pet could not be registered. Please check the configuration file to make sure you didn't miss anything.");
@@ -83,7 +93,10 @@ public class PetConfig extends AbstractConfig {
             mountType = "walking";
         pet.setAutoRide(autoRide);
         pet.setDistance(distance);
+        pet.setSpawnRange(spawnRange);
+        pet.setComingBackRange(comingbackRange);
         pet.setMountType(mountType);
+        pet.setSignals(signals);
 
         if(despawnSkillName != null)
         {
@@ -100,7 +113,8 @@ public class PetConfig extends AbstractConfig {
             }.runTaskLater(AdvancedPet.getInstance(), 5L);
         }
 
-        pet.buildIcon(iconName, description, textureBase64);
+        pet.setIcon(pet.buildItem(pet.getIcon(), pet.toString(), iconName, description, materialType, customModelData, textureBase64));
+        pet.setSignalStick(pet.buildItem(pet.getSignalStick(), Pet.SIGNAL_STICK_TAG, signalStick_Name, signalStick_Description, signalStick_Mat, signalStick_Data, signalStick_64));
 
         this.pet = pet;
     }

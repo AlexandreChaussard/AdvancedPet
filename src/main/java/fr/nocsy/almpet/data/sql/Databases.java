@@ -1,17 +1,15 @@
 package fr.nocsy.almpet.data.sql;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
-
 import fr.nocsy.almpet.AdvancedPet;
-import fr.nocsy.almpet.data.GlobalConfig;
-import fr.nocsy.almpet.data.Pet;
+import fr.nocsy.almpet.data.config.GlobalConfig;
 import fr.nocsy.almpet.data.inventories.PlayerData;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class Databases {
 

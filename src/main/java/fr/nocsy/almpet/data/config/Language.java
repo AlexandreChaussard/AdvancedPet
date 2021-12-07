@@ -1,4 +1,4 @@
-package fr.nocsy.almpet.data;
+package fr.nocsy.almpet.data.config;
 
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
@@ -27,7 +27,7 @@ public enum Language {
     SUMMONED("§7A pet has been summoned !"),
     REVOKED("§7Your pet was revoked."),
     REVOKED_FOR_NEW_ONE("§7Your previous pet was revoked to summon the new one."),
-    MYTHICMOB_NULL("§cThis pet could not be summoned. The associated mythicMob is null."),
+    MYTHICMOB_NULL("§cThis pet could not be summoned. The associated mythicMob entity or file is null or was removed."),
     NO_MOB_MATCH("§cThis pet could not be summoned. The associated mythicmob isn't registered in MythicMobs."),
     NOT_ALLOWED("§cYou're not allowed to summon this pet."),
     OWNER_NOT_FOUND("§cThis pet could not be summoned. The summoner couldn't be found."),
@@ -36,21 +36,28 @@ public enum Language {
     NOT_MOUNTABLE_HERE("§cYou can't ride a pet in this area."),
     CANT_FOLLOW_HERE("§cYour pet can't follow you in this area."),
     TYPE_NAME_IN_CHAT("§aRight down in the chat the name of your pet."),
-    IF_WISH_TO_REMOVE_NAME("§aSIf you wish to remove it, right §c%tag%§a in the chat."),
+    IF_WISH_TO_REMOVE_NAME("§aIf you wish to remove it, write §c%tag%§a in the chat."),
     NICKNAME_CHANGED_SUCCESSFULY("§aNickname successfully changed !"),
     TAG_TO_REMOVE_NAME("None"),
     ALREADY_INSIDE_VEHICULE("§7You're already mounting something. Please dismount your current mount to use this feature."),
     PET_DOESNT_EXIST("§cThis pet doesn't exist. Please check the id."),
     PLAYER_NOT_CONNECTED("§cThe player §6%player%§c isn't connected."),
+    BLACKLISTED_WORD("§cRename operation has been cancelled. The word %word% is not allowed in a pet name."),
+    NO_ACTIVE_PET("§cYou have no active pet."),
+    SIGNAL_STICK_GIVEN("§aYou've received an order stick. Right click to cast an order, left click to switch orders."),
+    SIGNAL_STICK_SIGNAL("§6Active order : §e%signal%"),
 
     RELOAD_SUCCESS("§aReloaded successfully."),
     HOW_MANY_PETS_LOADED("§a%numberofpets% were registered successfully"),
 
-    USAGE("§7Usage : §6/almpet §8..." +
+    USAGE("§7Usage : §6/advancedpet §8..." +
                                         "\n§8   ... §areload " +
                                         "\n§8   ... §7(nothing here to open the GUI) " +
                                         "\n§8   ... §aopen §8<§7player§8>" +
-                                        "\n§8   ... §aspawn §8<§7id§8> <§7player§8> §atrue§8/§cfalse §7(check if the player have the permission to spawn the pet or not)"),
+                                        "\n§8   ... §aspawn §8<§7id§8> <§7player§8> §atrue§8/§cfalse §7(check if the player have the permission to spawn the pet or not)" +
+                                        "\n§8   ... §arevoke" +
+                                        "\n§8   ... §aname" +
+                                        "\n§8   ... §amount"),
     NO_PERM("§cYou're not allowed to use this command.");
 
     @Getter

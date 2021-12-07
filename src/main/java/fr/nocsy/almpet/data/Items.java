@@ -1,11 +1,10 @@
 package fr.nocsy.almpet.data;
 
-import fr.nocsy.almpet.data.inventories.PlayerData;
+import fr.nocsy.almpet.data.config.FormatArg;
+import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.utils.Utils;
 import lombok.Getter;
-import org.apache.commons.codec.language.bm.Lang;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -127,6 +126,11 @@ public enum Items {
         it.setItemMeta(meta);
 
         return it;
+    }
+
+    public static boolean isSignalStick(ItemStack it)
+    {
+        return it != null && it.hasItemMeta() && it.getItemMeta().hasLocalizedName() && it.getItemMeta().getLocalizedName().equals(Pet.SIGNAL_STICK_TAG);
     }
 
 }

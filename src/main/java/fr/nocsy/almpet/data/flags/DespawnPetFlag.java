@@ -1,7 +1,7 @@
 package fr.nocsy.almpet.data.flags;
 
 import fr.nocsy.almpet.AdvancedPet;
-import fr.nocsy.almpet.data.Language;
+import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.Pet;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

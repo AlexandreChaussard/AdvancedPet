@@ -1,8 +1,7 @@
 package fr.nocsy.almpet.data.sql;
 
 import fr.nocsy.almpet.AdvancedPet;
-import fr.nocsy.almpet.data.GlobalConfig;
-import org.bukkit.Bukkit;
+import fr.nocsy.almpet.data.config.GlobalConfig;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.Connection;

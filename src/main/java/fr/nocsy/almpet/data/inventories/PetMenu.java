@@ -1,14 +1,14 @@
 package fr.nocsy.almpet.data.inventories;
 
+import fr.nocsy.almpet.data.config.GlobalConfig;
 import fr.nocsy.almpet.data.Items;
-import fr.nocsy.almpet.data.Language;
+import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.Pet;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PetMenu {
@@ -23,16 +23,20 @@ public class PetMenu {
     {
         List<Pet> availablePets = Pet.getAvailablePets(p);
 
-        while(availablePets.size() - 53*page < 0 &&
-                page > 0)
-        {
-            page--;
-        }
+        int invSize = GlobalConfig.getInstance().getAdaptiveInventory();
 
-        int invSize = Math.max(Math.min(availablePets.size() - 53*page, 53), 0);
-        while(invSize%9 != 0 || invSize == 0)
-        {
-            invSize++;
+        if(invSize == -1) {
+
+            while (availablePets.size() - 53 * page < 0 &&
+                    page > 0) {
+                page--;
+            }
+
+            invSize = Math.max(Math.min(availablePets.size() - 53 * page, 53), 0);
+            while (invSize % 9 != 0 || invSize == 0) {
+                invSize++;
+            }
+
         }
 
         inventory = Bukkit.createInventory(null, invSize, title);

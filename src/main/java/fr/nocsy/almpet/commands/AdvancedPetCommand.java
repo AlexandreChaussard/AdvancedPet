@@ -1,8 +1,12 @@
 package fr.nocsy.almpet.commands;
 
 import fr.nocsy.almpet.AdvancedPet;
+import fr.nocsy.almpet.PPermission;
 import fr.nocsy.almpet.data.*;
+import fr.nocsy.almpet.data.config.FormatArg;
+import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.inventories.PetMenu;
+import fr.nocsy.almpet.listeners.PetInteractionMenuListener;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,16 +20,16 @@ public class AdvancedPetCommand implements CCommand {
 
     @Override
     public String getPermission() {
-        return "advancedpet.use";
+        return PPermission.USE.getPermission();
     }
 
     public String getAdminPermission() {
-        return "advancedpet.admin";
+        return PPermission.ADMIN.getPermission();
     }
 
     @Override
     public void execute(CommandSender sender, Command command, String label, String[] args) {
-        if(label.equalsIgnoreCase(getName()) && sender.hasPermission(getPermission()))
+        if(sender.hasPermission(getPermission()))
         {
             if(args.length == 4)
             {
@@ -91,6 +95,35 @@ public class AdvancedPetCommand implements CCommand {
                     Language.RELOAD_SUCCESS.sendMessage(sender);
                     Language.HOW_MANY_PETS_LOADED.sendMessageFormated(sender, new FormatArg("%numberofpets%", Integer.toString(Pet.getObjectPets().size())));
                     return;
+                }
+                if(sender instanceof Player
+                        && (args[0].equalsIgnoreCase("name")
+                            || args[0].equalsIgnoreCase("mount"))
+                            || args[0].equalsIgnoreCase("revoke"))
+                {
+                    Player p = (Player)sender;
+                    Pet pet = Pet.fromOwner(p.getUniqueId());
+
+                    if(pet == null)
+                    {
+                        Language.NO_ACTIVE_PET.sendMessage(p);
+                        return;
+                    }
+
+                    switch (args[0]) {
+                        case "name" -> {
+                            PetInteractionMenuListener.changeName(p);
+                            return;
+                        }
+                        case "mount" -> {
+                            PetInteractionMenuListener.mount(p, pet);
+                            return;
+                        }
+                        case "revoke" -> {
+                            PetInteractionMenuListener.revoke(p, pet);
+                            return;
+                        }
+                    }
                 }
             }
             else if(args.length == 0

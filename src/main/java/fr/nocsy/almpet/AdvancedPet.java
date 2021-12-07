@@ -1,7 +1,9 @@
 package fr.nocsy.almpet;
 
+import com.sk89q.worldguard.WorldGuard;
 import fr.nocsy.almpet.commands.CommandHandler;
 import fr.nocsy.almpet.data.*;
+import fr.nocsy.almpet.data.config.*;
 import fr.nocsy.almpet.data.flags.FlagsManager;
 import fr.nocsy.almpet.data.inventories.PlayerData;
 import fr.nocsy.almpet.data.sql.Databases;
@@ -30,6 +32,7 @@ public class AdvancedPet extends JavaPlugin {
     public void onEnable(){
 
         instance = this;
+        checkWorldGuard();
         CommandHandler.init(this);
         EventListener.init(this);
 
@@ -40,7 +43,8 @@ public class AdvancedPet extends JavaPlugin {
 
         try
         {
-            FlagsManager.init(this);
+            if(GlobalConfig.getInstance().isWorldguardsupport())
+                FlagsManager.init(this);
         } catch (IllegalPluginAccessException ex)
         {
             getLog().warning(getLogName() + "Flag manager encountered an exception " + ex.getClass().getSimpleName());
@@ -63,9 +67,25 @@ public class AdvancedPet extends JavaPlugin {
     public static void loadConfigs(){
         GlobalConfig.getInstance().init();
         LanguageConfig.getInstance().init();
+        BlacklistConfig.getInstance().init();
         PetConfig.loadPets(AbstractConfig.getPath() + "Pets/", true);
         Databases.init();
         PlayerData.initAll();
+    }
+
+    public void checkWorldGuard()
+    {
+        try
+        {
+            WorldGuard wg = WorldGuard.getInstance();
+            if(wg != null)
+                GlobalConfig.getInstance().setWorldguardsupport(true);
+        }
+        catch (NoClassDefFoundError error)
+        {
+            GlobalConfig.getInstance().setWorldguardsupport(false);
+            getLogger().warning("[AdvancedPet] : WorldGuard could not be found. Flags won't be available.");
+        }
     }
 
 }

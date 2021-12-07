@@ -5,6 +5,8 @@ import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.mount.controller.MountController;
 import com.ticxo.modelengine.api.mount.handler.IMountHandler;
 import fr.nocsy.almpet.AdvancedPet;
+import fr.nocsy.almpet.data.config.GlobalConfig;
+import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.inventories.PlayerData;
 import fr.nocsy.almpet.utils.Utils;
 import io.lumine.xikage.mythicmobs.MythicMobs;
@@ -15,7 +17,9 @@ import io.lumine.xikage.mythicmobs.skills.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +33,10 @@ import java.util.*;
 public class Pet {
 
     //---------------------------------------------------------------------
+    public static final String SIGNAL_STICK_TAG = "&AdvancedPet-SignalSticks&";
+
+    //---------------------------------------------------------------------
+    public static final int BLOCKED = 1;
     public static final int MOB_SPAWN = 0;
     public static final int DESPAWNED_PREVIOUS = 1;
     public static final int OWNER_NULL = -1;
@@ -68,9 +76,21 @@ public class Pet {
     @Setter
     private int distance;
 
+    @Getter
+    @Setter
+    private int spawnRange;
+
+    @Getter
+    @Setter
+    private int comingBackRange;
+
     @Setter
     @Getter
     private ItemStack icon;
+
+    @Setter
+    @Getter
+    private ItemStack signalStick;
 
     @Getter
     @Setter
@@ -87,6 +107,10 @@ public class Pet {
     @Setter
     @Getter
     private String mountType;
+
+    @Getter
+    @Setter
+    private List<String> signals;
 
     //********** Living entity **********
 
@@ -113,18 +137,20 @@ public class Pet {
     @Setter
     private boolean firstSpawn;
 
+    // Make sure there is no flooding spawn
+    private boolean antiDuplication = false;
+
     /**
      * Constructor only used to create a fundamental Pet. If you wish to use a pet instance, please refer to copy()
      * @param id
      */
-    protected Pet(String id)
+    public Pet(String id)
     {
         this.id = id;
         this.instance = this;
         this.checkPermission = true;
         this.firstSpawn = true;
     }
-
 
     /**
      * Spawn the pet if possible. Return values are indicated in this class.
@@ -133,19 +159,28 @@ public class Pet {
      */
     public int spawn(Location loc)
     {
+        if(antiDuplication)
+            return BLOCKED;
+
+        new BukkitRunnable()
+        {
+            @Override
+            public void run() {
+                antiDuplication = false;
+            }
+        }.runTaskLater(AdvancedPet.getInstance(), 2L);
+
         if(checkPermission && owner != null &&
                 Bukkit.getPlayer(owner) != null &&
                 !Bukkit.getPlayer(owner).hasPermission(permission))
             return NOT_ALLOWED;
 
         if(mythicMobName == null)
+        {
             return MYTHIC_MOB_NULL;
+        }
         else if(owner == null)
             return OWNER_NULL;
-        else if(Pet.getActivePets().containsKey(owner))
-        {
-            Pet.getActivePets().get(owner).despawn();
-        }
 
         try {
 
@@ -156,7 +191,7 @@ public class Pet {
             }
             else
             {
-                ent = MythicMobs.inst().getAPIHelper().spawnMythicMob(mythicMobName,  Utils.bruised(loc, getDistance()));
+                ent = MythicMobs.inst().getAPIHelper().spawnMythicMob(mythicMobName,  Utils.bruised(loc, getSpawnRange()));
             }
             if(ent == null)
             {
@@ -184,8 +219,7 @@ public class Pet {
                 Pet previous = activePets.get(owner);
                 previous.despawn();
 
-                activePets.remove(owner, this);
-
+                activePets.remove(owner);
                 returnDespawned = true;
             }
 
@@ -218,6 +252,8 @@ public class Pet {
                     }
                 }.runTaskLater(AdvancedPet.getInstance(), 5L);
             }
+
+            PlayerSignal.setDefaultSignal(owner, this);
 
             if(returnDespawned)
                 return DESPAWNED_PREVIOUS;
@@ -285,7 +321,7 @@ public class Pet {
 
                     double distance = Utils.distance(ownerLoc, petLoc);
 
-                    if(distance < getInstance().distance)
+                    if(distance < getInstance().getComingBackRange())
                     {
                         MythicMobs.inst().getVolatileCodeHandler().getAIHandler().navigateToLocation(getInstance().getActiveMob().getEntity(), getInstance().getActiveMob().getEntity().getLocation(), Double.POSITIVE_INFINITY);
                     }
@@ -300,6 +336,7 @@ public class Pet {
                     }
                     else if(distance > GlobalConfig.getInstance().getDistanceTeleport() && !p.isFlying())
                     {
+                        antiDuplication = true;
                         getInstance().teleportToPlayer(p);
                     }
                 }
@@ -331,6 +368,7 @@ public class Pet {
      */
     public boolean despawn()
     {
+        Bukkit.getScheduler().cancelTask(task);
         removed = true;
         if(activeMob != null)
         {
@@ -351,6 +389,7 @@ public class Pet {
             if(ownerPlayer != null)
             {
                 this.dismount(ownerPlayer);
+                Pet.clearStickSignals(ownerPlayer);
             }
 
             activePets.remove(owner);
@@ -400,7 +439,7 @@ public class Pet {
     {
         try {
 
-            if (name != null && name.length() > GlobalConfig.instance.getMaxNameLenght()) {
+            if (name != null && ChatColor.stripColor(name).length() > GlobalConfig.instance.getMaxNameLenght()) {
                 setDisplayName(name.substring(0, GlobalConfig.instance.getMaxNameLenght()), save);
                 return;
             }
@@ -466,13 +505,17 @@ public class Pet {
         pet.setMythicMobName(mythicMobName);
         pet.setPermission(permission);
         pet.setDistance(distance);
+        pet.setSpawnRange(spawnRange);
+        pet.setComingBackRange(comingBackRange);
         pet.setDespawnSkill(despawnSkill);
         pet.setMountable(mountable);
         pet.setMountType(mountType);
         pet.setAutoRide(autoRide);
         pet.setIcon(icon);
+        pet.setSignalStick(signalStick);
         pet.setOwner(owner);
         pet.setActiveMob(activeMob);
+        pet.setSignals(signals);
         return pet;
     }
 
@@ -557,17 +600,95 @@ public class Pet {
     }
 
     /**
-     * Setup the icon for the menu of selection. It shouldn't have to be updated out of the data package.
+     * Give a stick signal to the player refering to his pet
+     * @param p
+     */
+    public void giveStickSignals(Player p)
+    {
+        if(getOwner() == null || getSignalStick() == null)
+            return;
+
+        if(p == null)
+            return;
+
+        clearStickSignals(p);
+
+        p.getInventory().addItem(this.getSignalStick());
+
+    }
+
+    /**
+     * Remove the stick signal from inventory
+     * @param p
+     */
+    public static void clearStickSignals(Player p)
+    {
+        if(p == null)
+            return;
+
+        for(int i = 0; i < p.getInventory().getSize(); i++)
+        {
+            ItemStack item = p.getInventory().getItem(i);
+            if(Items.isSignalStick(item))
+            {
+                p.getInventory().setItem(i, new ItemStack(Material.AIR));
+            }
+        }
+    }
+
+    /**
+     * Get the pet to cast a skill by sending it a signal
+     * @param signal
+     * @return
+     */
+    public boolean castSkill(String signal)
+    {
+        if(this.isStillHere())
+        {
+            ActiveMob mob = this.getActiveMob();
+            mob.signalMob(mob.getEntity(), signal);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Setup the item with requirements
      * @param iconName
      * @param description
      * @param textureBase64
      */
-    protected void buildIcon(String iconName, List<String> description, String textureBase64)
+    public ItemStack buildItem(ItemStack item, String localizedName, String iconName, List<String> description, String materialType, int customModelData, String textureBase64)
     {
-        icon = Utils.createHead(iconName, description, textureBase64);
-        ItemMeta meta = icon.getItemMeta();
-        meta.setLocalizedName(this.toString());
-        icon.setItemMeta(meta);
+
+        Material mat = materialType != null ? Material.getMaterial(materialType) : null;
+
+        if(mat == null
+                && textureBase64 != null)
+        {
+            item = Utils.createHead(iconName, description, textureBase64);
+            ItemMeta meta = item.getItemMeta();
+            meta.setLocalizedName(localizedName);
+            item.setItemMeta(meta);
+        }
+        else if(mat != null)
+        {
+            item = new ItemStack(mat);
+            ItemMeta meta = item.getItemMeta();
+            meta.setLocalizedName(localizedName);
+            meta.setCustomModelData(customModelData);
+            meta.setDisplayName(iconName);
+            meta.setLore(description);
+            item.setItemMeta(meta);
+        }
+        else
+        {
+            item = Utils.createHead(iconName, description, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWQ5Y2M1OGFkMjVhMWFiMTZkMzZiYjVkNmQ0OTNjOGY1ODk4YzJiZjMwMmI2NGUzMjU5MjFjNDFjMzU4NjcifX19");
+            ItemMeta meta = item.getItemMeta();
+            meta.setLocalizedName(localizedName);
+            item.setItemMeta(meta);
+        }
+        return item;
     }
 
     /**

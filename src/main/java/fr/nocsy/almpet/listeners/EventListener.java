@@ -15,6 +15,7 @@ public class EventListener implements Listener {
         listeners.add(new PetMenuListener());
         listeners.add(new PetInteractionMenuListener());
         listeners.add(new PetListener());
+        listeners.add(new SignalStickListener());
 
         listeners.add(new MythicListener());
 

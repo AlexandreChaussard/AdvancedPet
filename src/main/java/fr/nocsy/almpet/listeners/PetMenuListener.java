@@ -1,7 +1,5 @@
 package fr.nocsy.almpet.listeners;
 
-import fr.nocsy.almpet.data.GlobalConfig;
-import fr.nocsy.almpet.data.Language;
 import fr.nocsy.almpet.data.Pet;
 import fr.nocsy.almpet.data.inventories.PetMenu;
 import org.bukkit.entity.Player;

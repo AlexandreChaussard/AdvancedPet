@@ -3,12 +3,15 @@ main: fr.nocsy.almpet.AdvancedPet
 version: 0.3.0
 description: Plugin made by Nocsy
 depends:
-  - WorldGuard
   - MythicMobs
   - ModelEngine
+softdepend:
+  - WorldGuard
 author: Nocsy
 api-version: 1.16
 commands:
   advancedpet:
     description: Command to manage your pets
     Usage: /advancedpet
+    permission: advancedpet.use
+    aliases: [pets]

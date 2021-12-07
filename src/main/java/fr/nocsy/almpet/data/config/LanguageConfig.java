@@ -1,4 +1,4 @@
-package fr.nocsy.almpet.data;
+package fr.nocsy.almpet.data.config;
 
 import fr.nocsy.almpet.AdvancedPet;
 import lombok.Getter;

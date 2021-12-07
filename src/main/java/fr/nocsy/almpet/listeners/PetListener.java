@@ -1,8 +1,9 @@
 package fr.nocsy.almpet.listeners;
 
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import fr.nocsy.almpet.AdvancedPet;
-import fr.nocsy.almpet.data.GlobalConfig;
-import fr.nocsy.almpet.data.Language;
+import fr.nocsy.almpet.data.config.GlobalConfig;
+import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.Pet;
 import fr.nocsy.almpet.data.inventories.PetInteractionMenu;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
@@ -169,6 +170,29 @@ public class PetListener implements Listener {
                     {
                         Language.REVOKED.sendMessage(owner);
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Handle random despawn
+     * @param e
+     */
+    @EventHandler
+    public void despawn(EntityRemoveFromWorldEvent e)
+    {
+        e.getEntity();
+        Pet pet = Pet.getFromEntity(e.getEntity());
+        if(pet != null)
+        {
+            if(!pet.isRemoved())
+            {
+                pet.despawn();
+                Player owner = Bukkit.getPlayer(pet.getOwner());
+                if(owner != null)
+                {
+                    Language.REVOKED.sendMessage(owner);
                 }
             }
         }
