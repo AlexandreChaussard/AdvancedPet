@@ -8,6 +8,7 @@ import fr.nocsy.almpet.AdvancedPet;
 import fr.nocsy.almpet.data.config.GlobalConfig;
 import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.inventories.PlayerData;
+import fr.nocsy.almpet.events.*;
 import fr.nocsy.almpet.utils.Utils;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.adapters.AbstractLocation;
@@ -160,7 +161,9 @@ public class Pet {
     public int spawn(Location loc)
     {
         if(antiDuplication)
+        {
             return BLOCKED;
+        }
 
         new BukkitRunnable()
         {
@@ -169,6 +172,12 @@ public class Pet {
                 antiDuplication = false;
             }
         }.runTaskLater(AdvancedPet.getInstance(), 2L);
+
+        PetSpawnEvent event = new PetSpawnEvent(this);
+        Utils.callEvent(event);
+
+        if(event.isCancelled())
+            return BLOCKED;
 
         if(checkPermission && owner != null &&
                 Bukkit.getPlayer(owner) != null &&
@@ -217,7 +226,7 @@ public class Pet {
             if(activePets.containsKey(owner))
             {
                 Pet previous = activePets.get(owner);
-                previous.despawn();
+                previous.despawn(PetDespawnReason.REPLACED);
 
                 activePets.remove(owner);
                 returnDespawned = true;
@@ -314,7 +323,7 @@ public class Pet {
 
                     if(!ownerLoc.getWorld().getName().equals(petLoc.getWorld().getName()))
                     {
-                        getInstance().despawn();
+                        getInstance().despawn(PetDespawnReason.TELEPORT);
                         getInstance().spawn(p, p.getLocation());
                         return;
                     }
@@ -342,7 +351,7 @@ public class Pet {
                 }
                 else
                 {
-                    getInstance().despawn();
+                    getInstance().despawn(PetDespawnReason.OWNER_NOT_HERE);
                     Bukkit.getScheduler().cancelTask(task);
                 }
 
@@ -366,8 +375,11 @@ public class Pet {
      * Despawn the pet
      * @return
      */
-    public boolean despawn()
+    public boolean despawn(PetDespawnReason reason)
     {
+        PetDespawnEvent event = new PetDespawnEvent(this, reason);
+        Utils.callEvent(event);
+
         Bukkit.getScheduler().cancelTask(task);
         removed = true;
         if(activeMob != null)
@@ -407,7 +419,7 @@ public class Pet {
     {
         if(isStillHere())
         {
-            this.despawn();
+            this.despawn(PetDespawnReason.TELEPORT);
             this.spawn(loc);
         }
     }
@@ -435,8 +447,17 @@ public class Pet {
     /**
      * Set the display name of the pet
      */
-    public void setDisplayName(final String name, final boolean save)
+    public void setDisplayName(String wanted_name, boolean save)
     {
+        PetChangeNameEvent event = new PetChangeNameEvent(this, wanted_name, save);
+        Utils.callEvent(event);
+
+        if(event.isCancelled())
+            return;
+
+        final String name = event.getName();
+        save = event.isSaveChanges();
+
         try {
 
             if (name != null && ChatColor.stripColor(name).length() > GlobalConfig.instance.getMaxNameLenght()) {
@@ -496,7 +517,7 @@ public class Pet {
     }
 
     /**
-     * Return a copy of the current pet. Useful to implement a player pet in game
+     * Return a copy of the current pet. Used to implement a player pet in game
      * @return
      */
     public Pet copy()
@@ -525,6 +546,12 @@ public class Pet {
      */
     public boolean setMount(Entity ent)
     {
+        EntityMountPetEvent event = new EntityMountPetEvent(ent, this);
+        Utils.callEvent(event);
+
+        if(event.isCancelled())
+            return false;
+
         if(isStillHere())
         {
             UUID petUUID = activeMob.getEntity().getUniqueId();
@@ -570,17 +597,25 @@ public class Pet {
      */
     public void dismount(Entity ent)
     {
-        if(isStillHere())
+        if(ent == null)
+            return;
+
+        // Try - catch to prevent onDisable no class def found print
+        try
         {
-            UUID localUUID = activeMob.getEntity().getUniqueId();
-            ModeledEntity localModeledEntity = ModelEngineAPI.api.getModelManager().getModeledEntity(localUUID);
-            if (localModeledEntity == null) {
-                return;
+            if(isStillHere())
+            {
+                UUID localUUID = activeMob.getEntity().getUniqueId();
+                ModeledEntity localModeledEntity = ModelEngineAPI.api.getModelManager().getModeledEntity(localUUID);
+                if (localModeledEntity == null) {
+                    return;
+                }
+                IMountHandler localIMountHandler = localModeledEntity.getMountHandler();
+                localIMountHandler.removePassenger(ent);
+                localIMountHandler.setDriver(null);
             }
-            IMountHandler localIMountHandler = localModeledEntity.getMountHandler();
-            localIMountHandler.removePassenger(ent);
-            localIMountHandler.setDriver(null);
-        }
+
+        } catch (NoClassDefFoundError ignored){}
 
     }
 
@@ -643,6 +678,12 @@ public class Pet {
      */
     public boolean castSkill(String signal)
     {
+        PetCastSkillEvent event = new PetCastSkillEvent(this, signal);
+        Utils.callEvent(event);
+
+        if(event.isCancelled())
+            return false;
+
         if(this.isStillHere())
         {
             ActiveMob mob = this.getActiveMob();
@@ -832,7 +873,7 @@ public class Pet {
     {
         for(Pet pet : Pet.getActivePets().values())
         {
-            pet.despawn();
+            pet.despawn(PetDespawnReason.RELOAD);
         }
     }
 

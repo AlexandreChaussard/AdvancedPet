@@ -1,6 +1,7 @@
 package fr.nocsy.almpet.data.flags;
 
 import fr.nocsy.almpet.AdvancedPet;
+import fr.nocsy.almpet.data.PetDespawnReason;
 import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.Pet;
 import org.bukkit.Bukkit;
@@ -49,7 +50,7 @@ public class DespawnPetFlag extends AbstractFlag implements StoppableFlag{
 
                         if(hasToBeRemoved)
                         {
-                            pet.despawn();
+                            pet.despawn(PetDespawnReason.FLAG);
                             Language.CANT_FOLLOW_HERE.sendMessage(p);
                         }
 

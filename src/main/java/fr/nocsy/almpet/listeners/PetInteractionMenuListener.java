@@ -4,6 +4,7 @@ import fr.nocsy.almpet.PPermission;
 import fr.nocsy.almpet.data.*;
 import fr.nocsy.almpet.data.config.BlacklistConfig;
 import fr.nocsy.almpet.data.config.FormatArg;
+import fr.nocsy.almpet.data.config.GlobalConfig;
 import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.inventories.PetInteractionMenu;
 import fr.nocsy.almpet.data.inventories.PetMenu;
@@ -31,7 +32,7 @@ public class PetInteractionMenuListener implements Listener {
 
             Player p = (Player) e.getWhoClicked();
 
-            if(e.getClickedInventory() == null)
+            if(e.getClickedInventory() == null && GlobalConfig.getInstance().isActivateBackMenuIcon())
             {
                 openBackPetMenu(p);
                 return;
@@ -158,7 +159,7 @@ public class PetInteractionMenuListener implements Listener {
 
     public static void revoke(Player p, Pet pet)
     {
-        pet.despawn();
+        pet.despawn(PetDespawnReason.REVOKE);
         Language.REVOKED.sendMessage(p);
     }
 

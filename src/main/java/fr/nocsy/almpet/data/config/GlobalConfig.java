@@ -32,6 +32,8 @@ public class GlobalConfig extends AbstractConfig {
     @Getter
     private int maxNameLenght = 16;
     @Getter
+    private boolean activateBackMenuIcon = true;
+    @Getter
     private String MySQL_USER;
     @Getter
     private String MySQL_PASSWORD;
@@ -79,6 +81,8 @@ public class GlobalConfig extends AbstractConfig {
             getConfig().set("MaxNameLenght", maxNameLenght);
         if(getConfig().get("InventorySize") == null)
             getConfig().set("InventorySize", -1);
+        if(getConfig().get("ActivateBackMenuIcon") == null)
+            getConfig().set("ActivateBackMenuIcon", activateBackMenuIcon);
         if (getConfig().get("MySQL.User") == null)
             getConfig().set("MySQL.User", "user");
         if (getConfig().get("MySQL.Password") == null)
@@ -104,16 +108,17 @@ public class GlobalConfig extends AbstractConfig {
 
         loadConfig();
 
-        prefix              = getConfig().getString("Prefix");
-        defaultName         = getConfig().getString("DefaultName");
-        rightClickToOpen    = getConfig().getBoolean("RightClickToOpenMenu");
-        leftClickToOpen     = getConfig().getBoolean("LeftClickToOpenMenu");
-        sneakMode           = getConfig().getBoolean("SneakMode");
-        nameable            = getConfig().getBoolean("Nameable");
-        mountable           = getConfig().getBoolean("Mountable");
-        distanceTeleport    = getConfig().getInt("DistanceTeleport");
-        maxNameLenght       = getConfig().getInt("MaxNameLenght");
-        adaptiveInventory   = getConfig().getInt("InventorySize");
+        prefix                  = getConfig().getString("Prefix");
+        defaultName             = getConfig().getString("DefaultName");
+        rightClickToOpen        = getConfig().getBoolean("RightClickToOpenMenu");
+        leftClickToOpen         = getConfig().getBoolean("LeftClickToOpenMenu");
+        sneakMode               = getConfig().getBoolean("SneakMode");
+        nameable                = getConfig().getBoolean("Nameable");
+        mountable               = getConfig().getBoolean("Mountable");
+        distanceTeleport        = getConfig().getInt("DistanceTeleport");
+        maxNameLenght           = getConfig().getInt("MaxNameLenght");
+        activateBackMenuIcon    = getConfig().getBoolean("ActivateBackMenuIcon");
+        adaptiveInventory       = getConfig().getInt("InventorySize");
         // Says it'll be an adaptive inventory
         if(adaptiveInventory <= 0)
             adaptiveInventory = -1;

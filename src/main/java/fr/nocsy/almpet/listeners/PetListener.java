@@ -2,6 +2,7 @@ package fr.nocsy.almpet.listeners;
 
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import fr.nocsy.almpet.AdvancedPet;
+import fr.nocsy.almpet.data.PetDespawnReason;
 import fr.nocsy.almpet.data.config.GlobalConfig;
 import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.Pet;
@@ -86,7 +87,7 @@ public class PetListener implements Listener {
         if(Pet.getActivePets().containsKey(p.getUniqueId()))
         {
             Pet pet = Pet.getActivePets().get(p.getUniqueId());
-            pet.despawn();
+            pet.despawn(PetDespawnReason.TELEPORT);
             pet.spawn(p, p.getLocation());
         }
 
@@ -146,7 +147,7 @@ public class PetListener implements Listener {
         if(Pet.getActivePets().containsKey(uuid) && e.getNewGameMode() == GameMode.SPECTATOR)
         {
             Pet pet = Pet.getActivePets().get(uuid);
-            pet.despawn();
+            pet.despawn(PetDespawnReason.GAMEMODE);
         }
     }
 
@@ -164,7 +165,7 @@ public class PetListener implements Listener {
             {
                 if(!pet.isRemoved())
                 {
-                    pet.despawn();
+                    pet.despawn(PetDespawnReason.MYTHICMOBS);
                     Player owner = Bukkit.getPlayer(pet.getOwner());
                     if(owner != null)
                     {
@@ -188,7 +189,7 @@ public class PetListener implements Listener {
         {
             if(!pet.isRemoved())
             {
-                pet.despawn();
+                pet.despawn(PetDespawnReason.UNKNOWN);
                 Player owner = Bukkit.getPlayer(pet.getOwner());
                 if(owner != null)
                 {
@@ -212,7 +213,7 @@ public class PetListener implements Listener {
             {
                 if(!pet.isRemoved())
                 {
-                    pet.despawn();
+                    pet.despawn(PetDespawnReason.DEATH);
                     Player owner = Bukkit.getPlayer(pet.getOwner());
                     if(owner != null)
                     {

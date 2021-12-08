@@ -7,10 +7,12 @@ import fr.nocsy.almpet.data.config.FormatArg;
 import fr.nocsy.almpet.data.config.Language;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -127,6 +129,11 @@ public class Utils {
         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, text_component);
     }
 
+    /**
+     * Says whether or not the string is in the blacklist of words
+     * @param s
+     * @return
+     */
     public static String isInBlackList(String s)
     {
         String toMatch = ChatColor.stripColor(s).toLowerCase();
@@ -139,6 +146,11 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    public static void callEvent(Event e)
+    {
+        Bukkit.getPluginManager().callEvent(e);
     }
 
 }
