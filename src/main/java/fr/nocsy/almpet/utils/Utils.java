@@ -2,6 +2,7 @@ package fr.nocsy.almpet.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import fr.nocsy.almpet.AdvancedPet;
 import fr.nocsy.almpet.data.config.BlacklistConfig;
 import fr.nocsy.almpet.data.config.FormatArg;
 import fr.nocsy.almpet.data.config.Language;
@@ -151,6 +152,11 @@ public class Utils {
     public static void callEvent(Event e)
     {
         Bukkit.getPluginManager().callEvent(e);
+    }
+
+    public static void callAsyncEvent(Event e)
+    {
+        Bukkit.getScheduler().runTask(AdvancedPet.getInstance(), () -> Bukkit.getPluginManager().callEvent(e));
     }
 
 }

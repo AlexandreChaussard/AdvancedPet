@@ -447,16 +447,8 @@ public class Pet {
     /**
      * Set the display name of the pet
      */
-    public void setDisplayName(String wanted_name, boolean save)
+    public void setDisplayName(String name, boolean save)
     {
-        PetChangeNameEvent event = new PetChangeNameEvent(this, wanted_name, save);
-        Utils.callEvent(event);
-
-        if(event.isCancelled())
-            return;
-
-        final String name = event.getName();
-        save = event.isSaveChanges();
 
         try {
 
