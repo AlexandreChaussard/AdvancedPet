@@ -58,6 +58,10 @@ public class Databases {
 
                 for(String seriaPetName : namesTable)
                 {
+                    // treats the case in which input is empty or wrongly formatted
+                    if(seriaPetName == null || seriaPetName.length() == 0 || !seriaPetName.contains(";;"))
+                        continue;
+
                     String[] seriaId_Name = seriaPetName.split(";;");
                     try
                     {

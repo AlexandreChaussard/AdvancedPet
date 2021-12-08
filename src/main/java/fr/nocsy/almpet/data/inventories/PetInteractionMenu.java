@@ -23,7 +23,10 @@ public class PetInteractionMenu {
     {
         inventory = Bukkit.createInventory(null, InventoryType.HOPPER, title);
 
-        inventory.setItem(0, Items.PETMENU.getItem());
+        if(GlobalConfig.getInstance().isActivateBackMenuIcon())
+            inventory.setItem(0, Items.PETMENU.getItem());
+        else
+            inventory.setItem(0, Items.deco(Material.LIGHT_BLUE_STAINED_GLASS_PANE));
 
         if(GlobalConfig.getInstance().isNameable())
             inventory.setItem(1, Items.RENAME.getItem());

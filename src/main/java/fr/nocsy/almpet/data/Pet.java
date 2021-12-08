@@ -597,17 +597,25 @@ public class Pet {
      */
     public void dismount(Entity ent)
     {
-        if(isStillHere())
+        if(ent == null)
+            return;
+
+        // Try - catch to prevent onDisable no class def found print
+        try
         {
-            UUID localUUID = activeMob.getEntity().getUniqueId();
-            ModeledEntity localModeledEntity = ModelEngineAPI.api.getModelManager().getModeledEntity(localUUID);
-            if (localModeledEntity == null) {
-                return;
+            if(isStillHere())
+            {
+                UUID localUUID = activeMob.getEntity().getUniqueId();
+                ModeledEntity localModeledEntity = ModelEngineAPI.api.getModelManager().getModeledEntity(localUUID);
+                if (localModeledEntity == null) {
+                    return;
+                }
+                IMountHandler localIMountHandler = localModeledEntity.getMountHandler();
+                localIMountHandler.removePassenger(ent);
+                localIMountHandler.setDriver(null);
             }
-            IMountHandler localIMountHandler = localModeledEntity.getMountHandler();
-            localIMountHandler.removePassenger(ent);
-            localIMountHandler.setDriver(null);
-        }
+
+        } catch (NoClassDefFoundError ignored){}
 
     }
 
