@@ -13,6 +13,7 @@ public enum PetDespawnReason {
     FLAG("flag"),
     GAMEMODE("gamemode"),
     MYTHICMOBS("mythicmobs"),
+    SPAWN_ISSUE("spawn issue"),
     UNKNOWN("unkown");
 
 
@@ -22,6 +23,11 @@ public enum PetDespawnReason {
     PetDespawnReason(String reason)
     {
         this.reason = reason;
+    }
+
+    public boolean equals(PetDespawnReason reason)
+    {
+        return this.getReason().equals(reason.getReason());
     }
 
 

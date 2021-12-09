@@ -111,18 +111,15 @@ public class AdvancedPetCommand implements CCommand {
                     }
 
                     switch (args[0]) {
-                        case "name" -> {
+                        case "name":
                             PetInteractionMenuListener.changeName(p);
                             return;
-                        }
-                        case "mount" -> {
+                        case "mount":
                             PetInteractionMenuListener.mount(p, pet);
                             return;
-                        }
-                        case "revoke" -> {
+                        case "revoke":
                             PetInteractionMenuListener.revoke(p, pet);
                             return;
-                        }
                     }
                 }
             }

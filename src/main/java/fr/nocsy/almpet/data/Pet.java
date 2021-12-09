@@ -138,9 +138,6 @@ public class Pet {
     @Setter
     private boolean firstSpawn;
 
-    // Make sure there is no flooding spawn
-    private boolean antiDuplication = false;
-
     /**
      * Constructor only used to create a fundamental Pet. If you wish to use a pet instance, please refer to copy()
      * @param id
@@ -160,36 +157,32 @@ public class Pet {
      */
     public int spawn(Location loc)
     {
-        if(antiDuplication)
-        {
-            return BLOCKED;
-        }
-
-        new BukkitRunnable()
-        {
-            @Override
-            public void run() {
-                antiDuplication = false;
-            }
-        }.runTaskLater(AdvancedPet.getInstance(), 2L);
-
         PetSpawnEvent event = new PetSpawnEvent(this);
         Utils.callEvent(event);
 
         if(event.isCancelled())
+        {
+            despawn(PetDespawnReason.SPAWN_ISSUE);
             return BLOCKED;
+        }
 
         if(checkPermission && owner != null &&
                 Bukkit.getPlayer(owner) != null &&
                 !Bukkit.getPlayer(owner).hasPermission(permission))
+        {
+            despawn(PetDespawnReason.SPAWN_ISSUE);
             return NOT_ALLOWED;
-
+        }
         if(mythicMobName == null)
         {
+            despawn(PetDespawnReason.SPAWN_ISSUE);
             return MYTHIC_MOB_NULL;
         }
         else if(owner == null)
+        {
+            despawn(PetDespawnReason.SPAWN_ISSUE);
             return OWNER_NULL;
+        }
 
         try {
 
@@ -204,12 +197,14 @@ public class Pet {
             }
             if(ent == null)
             {
+                despawn(PetDespawnReason.SPAWN_ISSUE);
                 return MYTHIC_MOB_NULL;
             }
             Optional<ActiveMob> maybeHere = MythicMobs.inst().getMobManager().getActiveMob(ent.getUniqueId());
             maybeHere.ifPresent(mob -> activeMob = mob);
             if(activeMob == null)
             {
+                despawn(PetDespawnReason.SPAWN_ISSUE);
                 return MYTHIC_MOB_NULL;
             }
             ent.setMetadata("AlmPet", new FixedMetadataValue(AdvancedPet.getInstance(), this));
@@ -264,11 +259,14 @@ public class Pet {
 
             PlayerSignal.setDefaultSignal(owner, this);
 
+            setRemoved(false);
+
             if(returnDespawned)
                 return DESPAWNED_PREVIOUS;
             return MOB_SPAWN;
 
         } catch (InvalidMobTypeException e) {
+            despawn(PetDespawnReason.SPAWN_ISSUE);
             return NO_MOB_MATCH;
         }
 
@@ -284,12 +282,12 @@ public class Pet {
         int executed = this.spawn(p, p.getLocation());
 
         switch (executed) {
-            case Pet.DESPAWNED_PREVIOUS -> Language.REVOKED_FOR_NEW_ONE.sendMessage(p);
-            case Pet.MOB_SPAWN -> Language.SUMMONED.sendMessage(p);
-            case Pet.MYTHIC_MOB_NULL -> Language.MYTHICMOB_NULL.sendMessage(p);
-            case Pet.NO_MOB_MATCH -> Language.NO_MOB_MATCH.sendMessage(p);
-            case Pet.NOT_ALLOWED -> Language.NOT_ALLOWED.sendMessage(p);
-            case Pet.OWNER_NULL -> Language.OWNER_NOT_FOUND.sendMessage(p);
+            case Pet.DESPAWNED_PREVIOUS: Language.REVOKED_FOR_NEW_ONE.sendMessage(p); break;
+            case Pet.MOB_SPAWN: Language.SUMMONED.sendMessage(p); break;
+            case Pet.MYTHIC_MOB_NULL: Language.MYTHICMOB_NULL.sendMessage(p); break;
+            case Pet.NO_MOB_MATCH: Language.NO_MOB_MATCH.sendMessage(p); break;
+            case Pet.NOT_ALLOWED: Language.NOT_ALLOWED.sendMessage(p); break;
+            case Pet.OWNER_NULL: Language.OWNER_NOT_FOUND.sendMessage(p); break;
         }
     }
 
@@ -302,6 +300,8 @@ public class Pet {
 
         task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(AdvancedPet.getInstance(), new Runnable() {
 
+            private int teleportTick = 0;
+
             @Override
             public void run() {
 
@@ -309,6 +309,7 @@ public class Pet {
 
                 if(!getInstance().isStillHere())
                 {
+                    despawn(PetDespawnReason.UNKNOWN);
                     Bukkit.getScheduler().cancelTask(task);
                     return;
                 }
@@ -343,11 +344,13 @@ public class Pet {
                                                                     p.getLocation().getZ());
                         MythicMobs.inst().getVolatileCodeHandler().getAIHandler().navigateToLocation(getInstance().getActiveMob().getEntity(), aloc, Double.POSITIVE_INFINITY);
                     }
-                    else if(distance > GlobalConfig.getInstance().getDistanceTeleport() && !p.isFlying())
+                    else if(distance > GlobalConfig.getInstance().getDistanceTeleport() && !p.isFlying() && teleportTick == 0)
                     {
-                        antiDuplication = true;
                         getInstance().teleportToPlayer(p);
+                        teleportTick = 4;
                     }
+                    if(teleportTick > 0)
+                        teleportTick--;
                 }
                 else
                 {
@@ -382,6 +385,17 @@ public class Pet {
 
         Bukkit.getScheduler().cancelTask(task);
         removed = true;
+
+        Player ownerPlayer = Bukkit.getPlayer(owner);
+        if(ownerPlayer != null)
+        {
+            if(reason.equals(PetDespawnReason.UNKNOWN) ||
+                    reason.equals(PetDespawnReason.SPAWN_ISSUE))
+            {
+                Language.REVOKED.sendMessage(ownerPlayer);
+            }
+        }
+
         if(activeMob != null)
         {
 
@@ -397,7 +411,6 @@ public class Pet {
                     activeMob.getEntity().getBukkitEntity().remove();
             }
 
-            Player ownerPlayer = Bukkit.getPlayer(owner);
             if(ownerPlayer != null)
             {
                 this.dismount(ownerPlayer);
@@ -441,7 +454,13 @@ public class Pet {
      */
     public boolean isStillHere()
     {
-        return activeMob != null && activeMob.getEntity() != null && activeMob.getEntity().getBukkitEntity() != null && getActivePets().containsValue(this);
+        return activeMob != null &&
+                activeMob.getEntity() != null &&
+                activeMob.getEntity().getBukkitEntity() != null &&
+                !activeMob.getEntity().getBukkitEntity().isDead() &&
+                !activeMob.isDead() &&
+                getActivePets().containsValue(this) &&
+                !removed;
     }
 
     /**
