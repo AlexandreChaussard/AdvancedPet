@@ -14,6 +14,7 @@ public enum PetDespawnReason {
     GAMEMODE("gamemode"),
     MYTHICMOBS("mythicmobs"),
     SPAWN_ISSUE("spawn issue"),
+    LOOP_SPAWN("loop spawn"),
     UNKNOWN("unkown");
 
 

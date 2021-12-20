@@ -46,9 +46,12 @@ public enum Language {
     NO_ACTIVE_PET("§cYou have no active pet."),
     SIGNAL_STICK_GIVEN("§aYou've received an order stick. Right click to cast an order, left click to switch orders."),
     SIGNAL_STICK_SIGNAL("§6Active order : §e%signal%"),
+    LOOP_SPAWN("§cYour pet was revoked because it seems to struggle with numerous teleportations."),
 
     RELOAD_SUCCESS("§aReloaded successfully."),
     HOW_MANY_PETS_LOADED("§a%numberofpets% were registered successfully"),
+
+    REQUIRES_MODELENGINE("§cThis plugin requires ModelEngine r2.2.0. It seems that this requirement is not satisfied."),
 
     USAGE("§7Usage : §6/advancedpet §8..." +
                                         "\n§8   ... §areload " +

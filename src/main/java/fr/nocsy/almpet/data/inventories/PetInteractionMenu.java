@@ -32,6 +32,7 @@ public class PetInteractionMenu {
             inventory.setItem(1, Items.RENAME.getItem());
         else
             inventory.setItem(1, Items.deco(Material.LIGHT_BLUE_STAINED_GLASS_PANE));
+
         inventory.setItem(2, Items.petInfo(pet));
 
         if(GlobalConfig.getInstance().isMountable() && pet.isMountable()) {
