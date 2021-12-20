@@ -10,6 +10,7 @@ import fr.nocsy.almpet.data.config.Language;
 import fr.nocsy.almpet.data.inventories.PlayerData;
 import fr.nocsy.almpet.events.*;
 import fr.nocsy.almpet.utils.Utils;
+import fr.nocsy.almpet.utils.VolatileAIHandler;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.adapters.AbstractLocation;
 import io.lumine.xikage.mythicmobs.api.exceptions.InvalidMobTypeException;
@@ -138,6 +139,10 @@ public class Pet {
     @Setter
     private boolean firstSpawn;
 
+    // Debug variables
+
+    private boolean recurrent_spawn = false;
+
     /**
      * Constructor only used to create a fundamental Pet. If you wish to use a pet instance, please refer to copy()
      * @param id
@@ -164,6 +169,25 @@ public class Pet {
         {
             despawn(PetDespawnReason.SPAWN_ISSUE);
             return BLOCKED;
+        }
+
+        if(recurrent_spawn)
+        {
+            despawn(PetDespawnReason.LOOP_SPAWN);
+            if(Bukkit.getPlayer(owner) != null)
+                Language.LOOP_SPAWN.sendMessage(Bukkit.getPlayer(owner));
+            return BLOCKED;
+        }
+        else
+        {
+            recurrent_spawn = true;
+            // LOOP SPAWN issue
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    recurrent_spawn = false;
+                }
+            }.runTaskLater(AdvancedPet.getInstance(), 10L);
         }
 
         if(checkPermission && owner != null &&
@@ -280,7 +304,7 @@ public class Pet {
     public void spawnWithMessage(Player p, Location loc)
     {
         int executed = this.spawn(p, p.getLocation());
-
+        if(isStillHere())
         switch (executed) {
             case Pet.DESPAWNED_PREVIOUS: Language.REVOKED_FOR_NEW_ONE.sendMessage(p); break;
             case Pet.MOB_SPAWN: Language.SUMMONED.sendMessage(p); break;
@@ -342,9 +366,12 @@ public class Pet {
                                                                     p.getLocation().getX(),
                                                                     p.getLocation().getY(),
                                                                     p.getLocation().getZ());
-                        MythicMobs.inst().getVolatileCodeHandler().getAIHandler().navigateToLocation(getInstance().getActiveMob().getEntity(), aloc, Double.POSITIVE_INFINITY);
+                        VolatileAIHandler.navigateToLocation(getInstance().getActiveMob().getEntity(), aloc);
                     }
-                    else if(distance > GlobalConfig.getInstance().getDistanceTeleport() && !p.isFlying() && teleportTick == 0)
+                    else if(distance > GlobalConfig.getInstance().getDistanceTeleport()
+                            && !p.isFlying()
+                            && p.isOnGround()
+                            && teleportTick == 0)
                     {
                         getInstance().teleportToPlayer(p);
                         teleportTick = 4;
@@ -401,7 +428,15 @@ public class Pet {
 
             if(despawnSkill != null)
             {
-                despawnSkill.execute(new SkillMetadata(SkillTrigger.CUSTOM, activeMob, activeMob.getEntity()));
+                try
+                {
+                    despawnSkill.execute(new SkillMetadata(SkillTrigger.CUSTOM, activeMob, activeMob.getEntity()));
+                }
+                catch (NullPointerException ex)
+                {
+                    if(activeMob.getEntity() != null && activeMob.getEntity().getBukkitEntity() != null)
+                        activeMob.getEntity().getBukkitEntity().remove();
+                }
             }
             else
             {
@@ -565,19 +600,32 @@ public class Pet {
 
         if(isStillHere())
         {
-            UUID petUUID = activeMob.getEntity().getUniqueId();
-            ModeledEntity localModeledEntity = ModelEngineAPI.api.getModelManager().getModeledEntity(petUUID);
-            if (localModeledEntity == null) {
-                return false;
-            }
-            IMountHandler localIMountHandler = localModeledEntity.getMountHandler();
+            try {
+                UUID petUUID = activeMob.getEntity().getUniqueId();
+                ModeledEntity localModeledEntity = ModelEngineAPI.api.getModelManager().getModeledEntity(petUUID);
+                if (localModeledEntity == null) {
+                    activeMob.getEntity().getBukkitEntity().addPassenger(ent);
+                    return false;
+                }
+                IMountHandler localIMountHandler = localModeledEntity.getMountHandler();
 
-            MountController localMountController = ModelEngineAPI.api.getControllerManager().createController(mountType);
-            if (localMountController == null) {
-                localMountController = ModelEngineAPI.api.getControllerManager().createController("walking");
+                MountController localMountController = ModelEngineAPI.api.getControllerManager().createController(mountType);
+                if (localMountController == null) {
+                    localMountController = ModelEngineAPI.api.getControllerManager().createController("walking");
+                }
+                else
+                {
+                    activeMob.getEntity().getBukkitEntity().addPassenger(ent);
+                }
+                localIMountHandler.setDriver(ent, localMountController);
+                localIMountHandler.setCanDamageMount(ent, false);
             }
-            localIMountHandler.setDriver(ent, localMountController);
-            localIMountHandler.setCanDamageMount(ent, false);
+            catch (NoClassDefFoundError error)
+            {
+                AdvancedPet.getLog().warning(Language.REQUIRES_MODELENGINE.getMessage());
+                if(ent instanceof Player)
+                    ent.sendMessage(Language.REQUIRES_MODELENGINE.getMessage());
+            }
             return true;
         }
         return false;

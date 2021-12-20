@@ -109,7 +109,7 @@ public enum Items {
         lore.addAll(Arrays.asList(Language.NICKNAME_ITEM_LORE.getMessage().split("\n")));
 
         meta.setLore(lore);
-
+        meta.setLocalizedName(null);
         it.setItemMeta(meta);
         return it;
     }

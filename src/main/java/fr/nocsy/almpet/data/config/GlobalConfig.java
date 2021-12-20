@@ -1,7 +1,9 @@
 package fr.nocsy.almpet.data.config;
 
+import fr.nocsy.almpet.AdvancedPet;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 
 public class GlobalConfig extends AbstractConfig {
 
