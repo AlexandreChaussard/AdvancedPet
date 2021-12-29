@@ -613,10 +613,7 @@ public class Pet {
                 if (localMountController == null) {
                     localMountController = ModelEngineAPI.api.getControllerManager().createController("walking");
                 }
-                else
-                {
-                    activeMob.getEntity().getBukkitEntity().addPassenger(ent);
-                }
+                
                 localIMountHandler.setDriver(ent, localMountController);
                 localIMountHandler.setCanDamageMount(ent, false);
             }
