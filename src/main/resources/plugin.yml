@@ -1,6 +1,6 @@
 name: AdvancedPet
 main: fr.nocsy.almpet.AdvancedPet
-version: 1.0.3
+version: 1.0.6
 description: Plugin made by Nocsy
 depends:
   - MythicMobs

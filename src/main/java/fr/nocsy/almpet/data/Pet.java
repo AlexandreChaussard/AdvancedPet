@@ -2,8 +2,9 @@ package fr.nocsy.almpet.data;
 
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import com.ticxo.modelengine.api.mount.controller.MountController;
-import com.ticxo.modelengine.api.mount.handler.IMountHandler;
+import com.ticxo.modelengine.api.model.mount.controller.MountController;
+import com.ticxo.modelengine.api.model.mount.handler.IMountHandler;
+import com.ticxo.modelengine.api.model.nametag.INametagHandler;
 import fr.nocsy.almpet.AdvancedPet;
 import fr.nocsy.almpet.data.config.GlobalConfig;
 import fr.nocsy.almpet.data.config.Language;
@@ -13,6 +14,7 @@ import fr.nocsy.almpet.utils.Utils;
 import fr.nocsy.almpet.utils.VolatileAIHandler;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.adapters.AbstractLocation;
+import io.lumine.xikage.mythicmobs.adapters.AbstractWorld;
 import io.lumine.xikage.mythicmobs.api.exceptions.InvalidMobTypeException;
 import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
 import io.lumine.xikage.mythicmobs.skills.*;
@@ -409,7 +411,6 @@ public class Pet {
     {
         PetDespawnEvent event = new PetDespawnEvent(this, reason);
         Utils.callEvent(event);
-
         Bukkit.getScheduler().cancelTask(task);
         removed = true;
 
@@ -684,9 +685,9 @@ public class Pet {
                 return;
             }
             activeMob.getEntity().getBukkitEntity().setCustomNameVisible(visible);
-            localModeledEntity.setNametagVisible(visible);
-            localModeledEntity.setNametag(name);
-            localModeledEntity.setInvisible(true);
+            INametagHandler nameTagHandler = localModeledEntity.getNametagHandler();
+            nameTagHandler.setCustomName("name", name);
+            nameTagHandler.setCustomNameVisibility("name", visible);
         }
     }
 
